@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CASCADA DEL CESAR | Business Suite V4.5</title>
+    <title>CASCADA DEL CESAR | Business Suite V4.6</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
@@ -117,19 +117,19 @@
         <section id="config" class="page-section"><h3 class="fw-bold mb-4">Datos del Negocio</h3><div class="card-pro p-4 mt-3" style="max-width: 500px;"><div class="mb-3"><label class="small fw-bold">RAZÓN SOCIAL</label><input type="text" id="cfgNom" class="form-control"></div><div class="mb-3"><label class="small fw-bold">NIT</label><input type="text" id="cfgNit" class="form-control"></div><div class="mb-3"><label class="small fw-bold">DIRECCIÓN</label><input type="text" id="cfgDir" class="form-control"></div><div class="mb-4"><label class="small fw-bold">TELÉFONO</label><input type="text" id="cfgTel" class="form-control"></div><button class="btn btn-primary w-100 py-3 fw-bold" onclick="guardarConfig()">GUARDAR DATOS</button></div></section>
     </div>
 
-    <div class="modal fade" id="modSec" tabindex="-1"><div class="modal-dialog modal-sm modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header bg-danger text-white border-0"><h6 class="m-0">Seguridad</h6></div><div class="modal-body text-center"><input type="hidden" id="secAction"><input type="hidden" id="secIdx"><p id="secMsg" class="small fw-bold text-muted mb-3"></p><input type="password" id="secPass" class="form-control text-center mb-3" placeholder="CLAVE"><button class="btn btn-danger w-100 fw-bold" onclick="ejecutarAccionSegura()">CONFIRMAR</button></div></div></div></div>
+    <div class="modal fade" id="modSec" tabindex="-1"><div class="modal-dialog modal-sm modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header bg-danger text-white border-0"><h6 class="m-0">Seguridad</h6></div><div class="modal-body text-center"><input type="hidden" id="secAction"><input type="hidden" id="secIdx"><p id="secMsg" class="small fw-bold text-muted mb-3"></p><input type="password" id="secPass" class="form-control text-center mb-3" placeholder="CLAVE"><button class="btn btn-danger w-100 fw-bold" onclick="ejecutarAccionSecure()">CONFIRMAR</button></div></div></div></div>
     <div class="modal fade" id="modProd" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-body p-4"><input type="hidden" id="pIdx"><h6>Producto</h6><input type="text" id="pNom" class="form-control mb-2" placeholder="Nombre"><input type="number" id="pPre" class="form-control mb-2" placeholder="Precio"><input type="number" id="pSto" class="form-control mb-3" placeholder="Stock"><button class="btn btn-primary w-100" onclick="saveProd()">Guardar</button></div></div></div></div>
     <div class="modal fade" id="modCli" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-body p-4"><input type="hidden" id="cIdx"><h6>Ficha Cliente</h6><input type="text" id="cNom" class="form-control mb-2" placeholder="NOMBRE"><input type="text" id="cIden" class="form-control mb-2" placeholder="CEDULA / ID"><input type="text" id="cTel" class="form-control mb-2" placeholder="TELEFONO"><input type="text" id="cDir" class="form-control mb-2" placeholder="DIRECCION"><input type="text" id="cCity" class="form-control mb-3" placeholder="CIUDAD"><button class="btn btn-primary w-100" onclick="saveCli()">Guardar Cliente</button></div></div></div></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         const CLAVE_ADMIN = "Cascada*123";
-        let inventario = JSON.parse(localStorage.getItem('v45_inv')) || [];
-        let clientes = JSON.parse(localStorage.getItem('v45_cli')) || [];
-        let ventas = JSON.parse(localStorage.getItem('v45_ven')) || [];
-        let produccion = JSON.parse(localStorage.getItem('v45_pro')) || [];
-        let config = JSON.parse(localStorage.getItem('v45_cfg')) || { nombre: "CASCADA DEL CESAR", nit: "", dir: "", tel: "" };
-        let numFactura = JSON.parse(localStorage.getItem('v45_num')) || 1;
+        let inventario = JSON.parse(localStorage.getItem('v46_inv')) || [];
+        let clientes = JSON.parse(localStorage.getItem('v46_cli')) || [];
+        let ventas = JSON.parse(localStorage.getItem('v46_ven')) || [];
+        let produccion = JSON.parse(localStorage.getItem('v46_pro')) || [];
+        let config = JSON.parse(localStorage.getItem('v46_cfg')) || { nombre: "CASCADA DEL CESAR", nit: "", dir: "", tel: "" };
+        let numFactura = JSON.parse(localStorage.getItem('v46_num')) || 1;
         let carrito = [];
 
         const mSec = new bootstrap.Modal(document.getElementById('modSec'));
@@ -144,21 +144,13 @@
             render();
         }
 
-        // --- LÓGICA DE PRODUCCIÓN CON REINICIO ---
         function actualizarCalculosProduccion() {
-            // Solo cuenta las ventas que NO han sido procesadas en un arqueo previo
             let totalVendidos = 0;
-            ventas.forEach(v => { 
-                if(!v.arqueado) { // Filtro clave
-                    v.items.forEach(i => totalVendidos += i.cant); 
-                }
-            });
+            ventas.forEach(v => { if(!v.arqueado) { v.items.forEach(i => totalVendidos += i.cant); } });
             document.getElementById('prodVentas').value = totalVendidos;
-
             let totalInventario = 0;
             inventario.forEach(p => { totalInventario += (parseInt(p.stock) || 0); });
             document.getElementById('prodFin').value = totalInventario;
-
             calcularProdReal();
         }
 
@@ -186,20 +178,16 @@
                     hora: hoy.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
                     ini, ven, fin, res 
                 };
-                
-                // MARCAR VENTAS COMO PROCESADAS
                 ventas.forEach(v => { if(!v.arqueado) v.arqueado = true; });
-                
                 produccion.push(obj);
                 document.getElementById('prodIni').value = ""; 
                 save(); 
-                actualizarCalculosProduccion(); // Esto pondrá Ventas en 0 inmediatamente
+                actualizarCalculosProduccion();
                 render(); 
-                alert("Arqueo guardado. El contador de ventas para el próximo registro se ha reiniciado.");
+                alert("Arqueo guardado exitosamente.");
             }
         }
 
-        // --- RESTO DEL SISTEMA ---
         function imprimirFactura(v) { const w = window.open('', '_blank'); w.document.write(`<html><body onload="window.print();window.close()" style="width:280px;font-family:monospace;padding:10px;"><center><strong>${config.nombre}</strong><br>NIT: ${config.nit}<br>${config.dir}<br>Tel: ${config.tel}<br>----------------------------<br>FACTURA: ${v.id}<br>FECHA: ${v.fecha} ${v.hora}<br>CLIENTE: ${v.cliente}<br>----------------------------</center><table style="width:100%;font-size:12px;">${v.items.map(i => `<tr><td>${i.nombre} x${i.cant}</td><td align="right">$${i.sub.toLocaleString('de-DE')}</td></tr>`).join('')}</table>----------------------------<br><strong>TOTAL: <span style="float:right">$${v.total.toLocaleString('de-DE')}</span></strong><br>ABONO: <span style="float:right">$${v.abono.toLocaleString('de-DE')}</span><br>SALDO: <span style="float:right">$${v.deuda.toLocaleString('de-DE')}</span><br>----------------------------<br><center>Gracias por su compra</center></body></html>`); w.document.close(); }
         
         function procesarFactura() { 
@@ -215,7 +203,7 @@
                 items: [...carrito], 
                 total: t, abono: a, deuda: t-a, 
                 estado: (t-a) > 0 ? 'DEBE' : 'PAGO',
-                arqueado: false // Nueva propiedad para control de producción
+                arqueado: false 
             }; 
             carrito.forEach(c => { const p = inventario.find(i => i.id == c.id); if(p) p.stock -= c.cant; }); 
             ventas.push(v); numFactura++; save(); 
@@ -225,7 +213,7 @@
 
         function solicitarSeguridad(acc, idx) { document.getElementById('secAction').value = acc; document.getElementById('secIdx').value = idx; document.getElementById('secPass').value = ""; let msgs = { 'delVenta': '¿Eliminar factura?', 'editVenta': '¿Editar factura?', 'delProd': '¿Eliminar producto?', 'delCli': '¿Eliminar cliente?', 'prodSave': '¿Modificar registro?', 'delArqueo': '¿Eliminar arqueo?', 'editArqueo': '¿Cargar datos?' }; document.getElementById('secMsg').innerText = msgs[acc]; mSec.show(); }
         
-        function ejecutarAccionSegura() { 
+        function ejecutarAccionSecure() { 
             if(document.getElementById('secPass').value !== CLAVE_ADMIN) return alert("Clave Incorrecta"); 
             const acc = document.getElementById('secAction').value; 
             const idx = parseInt(document.getElementById('secIdx').value); 
@@ -250,6 +238,7 @@
         function sugerirPrecio() { const p = inventario.find(i => i.id == document.getElementById('vProd').value); if(p) document.getElementById('vPrec').value = p.precio; }
         function addCarrito() { const p = inventario.find(i => i.id == document.getElementById('vProd').value); if(!p) return; const cant = parseInt(document.getElementById('vCant').value); const prec = parseFloat(document.getElementById('vPrec').value); carrito.push({ id: p.id, nombre: p.nombre, cant, precio: prec, sub: cant * prec }); renderCart(); }
         function renderCart() { let h = ''; let t = 0; carrito.forEach((c,i) => { t += c.sub; h += `<tr><td>${c.nombre}</td><td>${c.cant}</td><td>$${c.sub.toLocaleString('de-DE')}</td><td class="text-end"><button class="btn-action btn-del" onclick="carrito.splice(${i},1);renderCart()"><i class="bi bi-trash"></i></button></td></tr>`; }); document.getElementById('cartBody').innerHTML = h; document.getElementById('totalDisp').innerText = `$${t.toLocaleString('de-DE')}`; }
+        
         function render() {
             document.getElementById('vProd').innerHTML = '<option value="">--</option>' + inventario.map(p => `<option value="${p.id}">${p.nombre}</option>`).join('');
             document.getElementById('dataCli').innerHTML = clientes.map(c => `<option value="${c.nombre}">`).join('');
@@ -259,16 +248,27 @@
             document.getElementById('prodHistBody').innerHTML = produccion.slice().reverse().map((p,i) => { let rIdx = produccion.length - 1 - i; return `<tr><td><small>${p.fecha}<br>${p.hora}</small></td><td>${p.ini}</td><td>${p.ven}</td><td>${p.fin}</td><td class="fw-bold text-success">${p.res}</td><td class="text-end"><button class="btn-action btn-edit" onclick="solicitarSeguridad('editArqueo', ${rIdx})"><i class="bi bi-pencil"></i></button><button class="btn-action btn-del" onclick="solicitarSeguridad('delArqueo', ${rIdx})"><i class="bi bi-trash"></i></button></td></tr>`; }).join('');
             document.getElementById('cfgNom').value = config.nombre; document.getElementById('cfgNit').value = config.nit; document.getElementById('cfgDir').value = config.dir; document.getElementById('cfgTel').value = config.tel;
         }
-        function save() { localStorage.setItem('v45_inv', JSON.stringify(inventario)); localStorage.setItem('v45_cli', JSON.stringify(clientes)); localStorage.setItem('v45_ven', JSON.stringify(ventas)); localStorage.setItem('v45_num', JSON.stringify(numFactura)); localStorage.setItem('v45_pro', JSON.stringify(produccion)); localStorage.setItem('v45_cfg', JSON.stringify(config)); }
+        
+        function save() { localStorage.setItem('v46_inv', JSON.stringify(inventario)); localStorage.setItem('v46_cli', JSON.stringify(clientes)); localStorage.setItem('v46_ven', JSON.stringify(ventas)); localStorage.setItem('v46_num', JSON.stringify(numFactura)); localStorage.setItem('v46_pro', JSON.stringify(produccion)); localStorage.setItem('v46_cfg', JSON.stringify(config)); }
         function abrirModProd(idx=-1){ document.getElementById('pIdx').value=idx; if(idx!==-1){const p=inventario[idx]; document.getElementById('pNom').value=p.nombre; document.getElementById('pPre').value=p.precio; document.getElementById('pSto').value=p.stock;} else {document.getElementById('pNom').value=''; document.getElementById('pPre').value=''; document.getElementById('pSto').value='';} mProd.show(); }
         function saveProd(){ const idx=parseInt(document.getElementById('pIdx').value); const p={id:idx===-1?Date.now():inventario[idx].id, nombre:document.getElementById('pNom').value, precio:parseFloat(document.getElementById('pPre').value), stock:parseInt(document.getElementById('pSto').value)}; if(idx===-1) inventario.push(p); else inventario[idx]=p; save(); mProd.hide(); render(); }
         function abrirModCli(idx=-1){ document.getElementById('cIdx').value=idx; if(idx!==-1){const c=clientes[idx]; document.getElementById('cNom').value=c.nombre; document.getElementById('cIden').value=c.iden; document.getElementById('cTel').value=c.tel; document.getElementById('cDir').value=c.dir; document.getElementById('cCity').value=c.city;} else {document.getElementById('cNom').value=''; document.getElementById('cIden').value=''; document.getElementById('cTel').value=''; document.getElementById('cDir').value=''; document.getElementById('cCity').value='';} mCli.show(); }
-        function saveCli(){ const idx=parseInt(document.getElementById('cIdx').value); const c={ nombre:document.getElementById('cNom').value, iden:document.getElementById('cIden').value, tel:document.getElementById('cTel').value, dir:document.getElementById('cCity').value, city:document.getElementById('cCity').value }; if(idx===-1) clientes.push(c); else clientes[idx]=c; save(); mCli.hide(); render(); }
+        function saveCli(){ const idx=parseInt(document.getElementById('cIdx').value); const c={ nombre:document.getElementById('cNom').value, iden:document.getElementById('cIden').value, tel:document.getElementById('cTel').value, dir:document.getElementById('cDir').value, city:document.getElementById('cCity').value }; if(idx===-1) clientes.push(c); else clientes[idx]=c; save(); mCli.hide(); render(); }
         function guardarConfig(){ config={nombre:document.getElementById('cfgNom').value, nit:document.getElementById('cfgNit').value, dir:document.getElementById('cfgDir').value, tel:document.getElementById('cfgTel').value}; save(); alert("Datos guardados"); }
         function filtrar() { const f = document.getElementById('filtro').value.toLowerCase(); document.querySelectorAll('#histBody tr').forEach(tr => { tr.style.display = tr.innerText.toLowerCase().includes(f) ? '' : 'none'; }); }
         function obtenerValorPuro(str) { return parseFloat(str.toString().replace(/\./g, "")) || 0; }
         function formatearEntradaAbono(input) { let valor = input.value.replace(/\D/g, ""); input.value = valor.replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
-        function exportarExcel() { let csv = "Factura;Fecha;Hora;Cliente;Total;Abono;Deuda;Estado\n"; ventas.forEach(v => { csv += `${v.id};${v.fecha};${v.hora};${v.cliente};${v.total};${v.abono};${v.deuda};${v.estado}\n`; }); const b = new Blob(["\ufeff"+csv], {type:'text/csv'}); const a = document.createElement('a'); a.href=URL.createObjectURL(b); a.download='Reporte_Cascada.csv'; a.click(); }
+        
+        // EXPORTACIÓN A EXCEL CORREGIDA (SEPARANDO FECHA Y HORA)
+        function exportarExcel() { 
+            let csv = "Factura;Fecha;Hora;Cliente;Total;Abono;Deuda;Estado\n"; 
+            ventas.forEach(v => { csv += `${v.id};${v.fecha};${v.hora};${v.cliente};${v.total};${v.abono};${v.deuda};${v.estado}\n`; }); 
+            const b = new Blob(["\ufeff"+csv], {type:'text/csv'}); 
+            const a = document.createElement('a'); 
+            a.href=URL.createObjectURL(b); 
+            a.download='Reporte_Cascada.csv'; 
+            a.click(); 
+        }
         render();
     </script>
 </body>
