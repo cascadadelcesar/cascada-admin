@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CASCADA DEL CESAR | Business Suite V4.5</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        :root { --primario: #0ea5e9; --oscuro: #0f172a; --fondo: #f8fafc; --acent: #38bdf8; }
+        body { background-color: var(--fondo); font-family: 'Inter', system-ui, sans-serif; color: #1e293b; }
+        .sidebar { width: 280px; height: 100vh; position: fixed; background: var(--oscuro); color: white; z-index: 1000; }
+        .nav-group-title { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; color: #64748b; padding: 25px 30px 10px; font-weight: 800; }
+        .sidebar .nav-link { color: #94a3b8; padding: 12px 30px; display: flex; align-items: center; text-decoration: none; cursor: pointer; border-left: 4px solid transparent; transition: 0.3s; }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active { background: #1e293b; color: var(--acent); border-left-color: var(--acent); }
+        .sidebar .nav-link i { font-size: 1.2rem; margin-right: 15px; }
+        .main-content { margin-left: 280px; padding: 40px; }
+        .card-pro { border: none; border-radius: 20px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); background: white; margin-bottom: 30px; border: 1px solid rgba(0,0,0,0.03); }
+        .page-section { display: none; animation: slideUp 0.4s ease-out; }
+        .page-section.active { display: block; }
+        .btn-action { width: 32px; height: 32px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; border: none; margin: 0 2px; transition: 0.2s; font-size: 0.9rem; }
+        .btn-edit { background: #e0f2fe; color: #0369a1; }
+        .btn-del { background: #fee2e2; color: #b91c1c; }
+        .btn-print { background: #f0fdf4; color: #16a34a; }
+        .status-pill { padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
+        .status-debe { background: #fff1f2; color: #e11d48; }
+        .status-pago { background: #f0fdf4; color: #16a34a; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        @media print { .no-print { display: none !important; } }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar d-flex flex-column no-print">
+        <div class="p-4 mb-2"><h4 class="fw-bold mb-0 text-info">CASCADA</h4><span class="text-white-50 small fw-bold">DEL CESAR • ADMIN</span></div>
+        <nav class="flex-grow-1">
+            <div class="nav-group-title">Operaciones</div>
+            <a class="nav-link active" onclick="showSection('ventas')"><i class="bi bi-cart-fill"></i> Nueva Venta</a>
+            <a class="nav-link" onclick="showSection('produccion')"><i class="bi bi-hammer"></i> Producción Real</a>
+            <a class="nav-link" onclick="showSection('inventario')"><i class="bi bi-box-seam-fill"></i> Inventario</a>
+            <a class="nav-link" onclick="showSection('clientes')"><i class="bi bi-people-fill"></i> Clientes</a>
+            <div class="nav-group-title">Administración</div>
+            <a class="nav-link" onclick="showSection('dashboard')"><i class="bi bi-journal-text"></i> Cartera/Ventas</a>
+            <a class="nav-link" onclick="showSection('config')"><i class="bi bi-gear-fill"></i> Empresa</a>
+        </nav>
+        <div class="p-4"><button class="btn btn-outline-info btn-sm w-100" onclick="exportarExcel()"><i class="bi bi-download me-2"></i>Excel</button></div>
+    </div>
+
+    <div class="main-content">
+        
+        <section id="ventas" class="page-section active">
+            <h3 class="fw-bold mb-4">Nueva Factura</h3>
+            <div class="row g-4">
+                <div class="col-lg-8">
+                    <div class="card-pro p-4">
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-12"><label class="small fw-bold">CLIENTE</label><input list="dataCli" id="vCliente" class="form-control bg-light border-0" placeholder="Nombre..."><datalist id="dataCli"></datalist></div>
+                            <div class="col-md-5"><label class="small fw-bold">PRODUCTO</label><select id="vProd" class="form-select bg-light border-0" onchange="sugerirPrecio()"></select></div>
+                            <div class="col-md-2"><label class="small fw-bold">CANT.</label><input type="number" id="vCant" class="form-control bg-light border-0" value="1"></div>
+                            <div class="col-md-3"><label class="small fw-bold">PRECIO UNIDAD</label><input type="number" id="vPrec" class="form-control bg-light border-0"></div>
+                            <div class="col-md-2 d-flex align-items-end"><button class="btn btn-primary w-100 py-2" onclick="addCarrito()"><i class="bi bi-plus-lg"></i></button></div>
+                        </div>
+                        <table class="table align-middle"><thead><tr><th>Detalle</th><th>Cant.</th><th>Subtotal</th><th></th></tr></thead><tbody id="cartBody"></tbody></table>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card-pro p-4 bg-primary text-white shadow-lg border-0">
+                        <p class="small fw-bold opacity-75 mb-1">VALOR TOTAL</p>
+                        <h1 class="display-5 fw-bold mb-4" id="totalDisp">$0</h1>
+                        <label class="small fw-bold opacity-75 mb-2">ABONO EN EFECTIVO ($)</label>
+                        <input type="text" id="vAbono" class="form-control form-control-lg border-0 mb-4 shadow-sm" style="background: rgba(255,255,255,0.2); color: white;" onkeyup="formatearEntradaAbono(this)">
+                        <button class="btn btn-light btn-lg w-100 fw-bold py-3 text-primary shadow" onclick="procesarFactura()">PROCESAR VENTA</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="produccion" class="page-section">
+            <h3 class="fw-bold mb-4">Arqueo de Producción</h3>
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <div class="card-pro p-4 border-top border-info border-4">
+                        <input type="hidden" id="prodIdx" value="-1">
+                        <div class="mb-3">
+                            <label class="small fw-bold text-muted text-uppercase">1. Stock Inicial (Manual)</label>
+                            <input type="number" id="prodIni" class="form-control border-primary" placeholder="¿Con cuánto empezaste?" oninput="calcularProdReal()">
+                        </div>
+                        <hr>
+                        <div class="mb-3">
+                            <label class="small fw-bold text-muted text-uppercase">2. Ventas Nuevas (Auto)</label>
+                            <input type="number" id="prodVentas" class="form-control bg-light" readonly>
+                            <div class="form-text small text-secondary">Ventas realizadas desde el último arqueo.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="small fw-bold text-muted text-uppercase">3. Stock Final Actual (Auto)</label>
+                            <input type="number" id="prodFin" class="form-control bg-light" readonly>
+                        </div>
+                        <div class="bg-primary text-white p-3 rounded-4 text-center mb-4 shadow-sm">
+                            <small class="fw-bold opacity-75">PRODUCIDO EN ESTE TURNO</small>
+                            <h2 class="fw-bold m-0" id="prodRes">0</h2>
+                        </div>
+                        <button class="btn btn-info w-100 py-3 fw-bold text-white shadow-sm" onclick="guardarArqueoSinClave()">GUARDAR Y REINICIAR CONTEO</button>
+                    </div>
+                </div>
+                <div class="col-lg-8">
+                    <div class="card-pro p-4">
+                        <h6 class="fw-bold mb-3">Historial de Arqueos</h6>
+                        <table class="table align-middle"><thead><tr><th>Fecha/Hora</th><th>Inicial</th><th>Ventas</th><th>Final</th><th>Producido</th><th class="text-end">Acciones</th></tr></thead><tbody id="prodHistBody"></tbody></table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="dashboard" class="page-section"><h3 class="fw-bold mb-4">Cartera y Ventas</h3><div class="card-pro p-4"><input type="text" id="filtro" class="form-control mb-4" placeholder="Buscar..." onkeyup="filtrar()"><div class="table-responsive"><table class="table table-hover align-middle"><thead><tr><th>No.</th><th>Fecha/Hora</th><th>Cliente</th><th>Total</th><th>Abono</th><th>Deuda</th><th>Estado</th><th class="text-center">Acciones</th></tr></thead><tbody id="histBody"></tbody></table></div></div></section>
+        <section id="inventario" class="page-section"><div class="d-flex justify-content-between mb-4"><h3 class="fw-bold">Inventario</h3><button class="btn btn-dark" onclick="abrirModProd()">+ Nuevo Producto</button></div><div class="card-pro overflow-hidden"><table class="table align-middle mb-0"><thead><tr><th>Nombre</th><th>Precio</th><th>Stock Actual</th><th class="text-end px-4">Acciones</th></tr></thead><tbody id="invBody"></tbody></table></div></section>
+        <section id="clientes" class="page-section"><div class="d-flex justify-content-between mb-4"><h3 class="fw-bold">Clientes</h3><button class="btn btn-dark" onclick="abrirModCli()">+ Nuevo Cliente</button></div><div class="card-pro overflow-hidden"><table class="table align-middle mb-0"><thead><tr><th>Nombre</th><th>ID / Cédula</th><th>Teléfono</th><th>Ciudad</th><th class="text-end px-4">Acciones</th></tr></thead><tbody id="cliBody"></tbody></table></div></section>
+        <section id="config" class="page-section"><h3 class="fw-bold mb-4">Datos del Negocio</h3><div class="card-pro p-4 mt-3" style="max-width: 500px;"><div class="mb-3"><label class="small fw-bold">RAZÓN SOCIAL</label><input type="text" id="cfgNom" class="form-control"></div><div class="mb-3"><label class="small fw-bold">NIT</label><input type="text" id="cfgNit" class="form-control"></div><div class="mb-3"><label class="small fw-bold">DIRECCIÓN</label><input type="text" id="cfgDir" class="form-control"></div><div class="mb-4"><label class="small fw-bold">TELÉFONO</label><input type="text" id="cfgTel" class="form-control"></div><button class="btn btn-primary w-100 py-3 fw-bold" onclick="guardarConfig()">GUARDAR DATOS</button></div></section>
+    </div>
+
+    <div class="modal fade" id="modSec" tabindex="-1"><div class="modal-dialog modal-sm modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header bg-danger text-white border-0"><h6 class="m-0">Seguridad</h6></div><div class="modal-body text-center"><input type="hidden" id="secAction"><input type="hidden" id="secIdx"><p id="secMsg" class="small fw-bold text-muted mb-3"></p><input type="password" id="secPass" class="form-control text-center mb-3" placeholder="CLAVE"><button class="btn btn-danger w-100 fw-bold" onclick="ejecutarAccionSegura()">CONFIRMAR</button></div></div></div></div>
+    <div class="modal fade" id="modProd" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-body p-4"><input type="hidden" id="pIdx"><h6>Producto</h6><input type="text" id="pNom" class="form-control mb-2" placeholder="Nombre"><input type="number" id="pPre" class="form-control mb-2" placeholder="Precio"><input type="number" id="pSto" class="form-control mb-3" placeholder="Stock"><button class="btn btn-primary w-100" onclick="saveProd()">Guardar</button></div></div></div></div>
+    <div class="modal fade" id="modCli" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-body p-4"><input type="hidden" id="cIdx"><h6>Ficha Cliente</h6><input type="text" id="cNom" class="form-control mb-2" placeholder="NOMBRE"><input type="text" id="cIden" class="form-control mb-2" placeholder="CEDULA / ID"><input type="text" id="cTel" class="form-control mb-2" placeholder="TELEFONO"><input type="text" id="cDir" class="form-control mb-2" placeholder="DIRECCION"><input type="text" id="cCity" class="form-control mb-3" placeholder="CIUDAD"><button class="btn btn-primary w-100" onclick="saveCli()">Guardar Cliente</button></div></div></div></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const CLAVE_ADMIN = "Cascada*123";
+        let inventario = JSON.parse(localStorage.getItem('v45_inv')) || [];
+        let clientes = JSON.parse(localStorage.getItem('v45_cli')) || [];
+        let ventas = JSON.parse(localStorage.getItem('v45_ven')) || [];
+        let produccion = JSON.parse(localStorage.getItem('v45_pro')) || [];
+        let config = JSON.parse(localStorage.getItem('v45_cfg')) || { nombre: "CASCADA DEL CESAR", nit: "", dir: "", tel: "" };
+        let numFactura = JSON.parse(localStorage.getItem('v45_num')) || 1;
+        let carrito = [];
+
+        const mSec = new bootstrap.Modal(document.getElementById('modSec'));
+        const mProd = new bootstrap.Modal(document.getElementById('modProd'));
+        const mCli = new bootstrap.Modal(document.getElementById('modCli'));
+
+        function showSection(id) {
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            if(id === 'produccion') { document.getElementById('prodIdx').value = "-1"; actualizarCalculosProduccion(); }
+            render();
+        }
+
+        // --- LÓGICA DE PRODUCCIÓN CON REINICIO ---
+        function actualizarCalculosProduccion() {
+            // Solo cuenta las ventas que NO han sido procesadas en un arqueo previo
+            let totalVendidos = 0;
+            ventas.forEach(v => { 
+                if(!v.arqueado) { // Filtro clave
+                    v.items.forEach(i => totalVendidos += i.cant); 
+                }
+            });
+            document.getElementById('prodVentas').value = totalVendidos;
+
+            let totalInventario = 0;
+            inventario.forEach(p => { totalInventario += (parseInt(p.stock) || 0); });
+            document.getElementById('prodFin').value = totalInventario;
+
+            calcularProdReal();
+        }
+
+        function calcularProdReal() {
+            const ini = parseFloat(document.getElementById('prodIni').value) || 0;
+            const ven = parseFloat(document.getElementById('prodVentas').value) || 0;
+            const fin = parseFloat(document.getElementById('prodFin').value) || 0;
+            const producido = (fin + ven) - ini;
+            document.getElementById('prodRes').innerText = producido.toLocaleString('de-DE');
+        }
+
+        function guardarArqueoSinClave() {
+            const ini = parseFloat(document.getElementById('prodIni').value) || 0;
+            const ven = parseFloat(document.getElementById('prodVentas').value) || 0;
+            const fin = parseFloat(document.getElementById('prodFin').value) || 0;
+            const pIdx = parseInt(document.getElementById('prodIdx').value);
+            
+            if(pIdx !== -1) {
+                solicitarSeguridad('prodSave', -1);
+            } else {
+                const res = (fin+ven-ini);
+                const hoy = new Date();
+                const obj = { 
+                    fecha: hoy.toLocaleDateString(), 
+                    hora: hoy.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                    ini, ven, fin, res 
+                };
+                
+                // MARCAR VENTAS COMO PROCESADAS
+                ventas.forEach(v => { if(!v.arqueado) v.arqueado = true; });
+                
+                produccion.push(obj);
+                document.getElementById('prodIni').value = ""; 
+                save(); 
+                actualizarCalculosProduccion(); // Esto pondrá Ventas en 0 inmediatamente
+                render(); 
+                alert("Arqueo guardado. El contador de ventas para el próximo registro se ha reiniciado.");
+            }
+        }
+
+        // --- RESTO DEL SISTEMA ---
+        function imprimirFactura(v) { const w = window.open('', '_blank'); w.document.write(`<html><body onload="window.print();window.close()" style="width:280px;font-family:monospace;padding:10px;"><center><strong>${config.nombre}</strong><br>NIT: ${config.nit}<br>${config.dir}<br>Tel: ${config.tel}<br>----------------------------<br>FACTURA: ${v.id}<br>FECHA: ${v.fecha} ${v.hora}<br>CLIENTE: ${v.cliente}<br>----------------------------</center><table style="width:100%;font-size:12px;">${v.items.map(i => `<tr><td>${i.nombre} x${i.cant}</td><td align="right">$${i.sub.toLocaleString('de-DE')}</td></tr>`).join('')}</table>----------------------------<br><strong>TOTAL: <span style="float:right">$${v.total.toLocaleString('de-DE')}</span></strong><br>ABONO: <span style="float:right">$${v.abono.toLocaleString('de-DE')}</span><br>SALDO: <span style="float:right">$${v.deuda.toLocaleString('de-DE')}</span><br>----------------------------<br><center>Gracias por su compra</center></body></html>`); w.document.close(); }
+        
+        function procesarFactura() { 
+            if(carrito.length === 0) return alert("Carrito vacío"); 
+            const t = carrito.reduce((a,b)=>a+b.sub,0); 
+            const a = obtenerValorPuro(document.getElementById('vAbono').value); 
+            const hoy = new Date(); 
+            const v = { 
+                id: "FAC-"+numFactura.toString().padStart(4,'0'), 
+                fecha: hoy.toLocaleDateString(), 
+                hora: hoy.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}), 
+                cliente: document.getElementById('vCliente').value || "Cliente General", 
+                items: [...carrito], 
+                total: t, abono: a, deuda: t-a, 
+                estado: (t-a) > 0 ? 'DEBE' : 'PAGO',
+                arqueado: false // Nueva propiedad para control de producción
+            }; 
+            carrito.forEach(c => { const p = inventario.find(i => i.id == c.id); if(p) p.stock -= c.cant; }); 
+            ventas.push(v); numFactura++; save(); 
+            if(confirm("¿Venta exitosa! ¿Desea imprimir la factura?")) imprimirFactura(v); 
+            carrito=[]; document.getElementById('vAbono').value=''; renderCart(); showSection('dashboard'); 
+        }
+
+        function solicitarSeguridad(acc, idx) { document.getElementById('secAction').value = acc; document.getElementById('secIdx').value = idx; document.getElementById('secPass').value = ""; let msgs = { 'delVenta': '¿Eliminar factura?', 'editVenta': '¿Editar factura?', 'delProd': '¿Eliminar producto?', 'delCli': '¿Eliminar cliente?', 'prodSave': '¿Modificar registro?', 'delArqueo': '¿Eliminar arqueo?', 'editArqueo': '¿Cargar datos?' }; document.getElementById('secMsg').innerText = msgs[acc]; mSec.show(); }
+        
+        function ejecutarAccionSegura() { 
+            if(document.getElementById('secPass').value !== CLAVE_ADMIN) return alert("Clave Incorrecta"); 
+            const acc = document.getElementById('secAction').value; 
+            const idx = parseInt(document.getElementById('secIdx').value); 
+            if(acc === 'delVenta') { ventas[idx].items.forEach(c => { const p = inventario.find(i => i.id == c.id); if(p) p.stock += c.cant; }); ventas.splice(idx,1); } 
+            else if(acc === 'editVenta') { const v = ventas[idx]; v.items.forEach(c => { const p = inventario.find(i => i.id == c.id); if(p) p.stock += c.cant; }); document.getElementById('vCliente').value = v.cliente; carrito = [...v.items]; ventas.splice(idx,1); showSection('ventas'); renderCart(); } 
+            else if(acc === 'delProd') { inventario.splice(idx, 1); } 
+            else if(acc === 'delCli') { clientes.splice(idx, 1); } 
+            else if(acc === 'prodSave') { 
+                const ini = parseFloat(document.getElementById('prodIni').value) || 0; 
+                const ven = parseFloat(document.getElementById('prodVentas').value) || 0; 
+                const fin = parseFloat(document.getElementById('prodFin').value) || 0; 
+                const pIdx = parseInt(document.getElementById('prodIdx').value); 
+                produccion[pIdx].ini = ini; produccion[pIdx].ven = ven; produccion[pIdx].fin = fin;
+                produccion[pIdx].res = (fin+ven-ini);
+                document.getElementById('prodIni').value = ""; document.getElementById('prodIdx').value = "-1"; 
+            } 
+            else if(acc === 'delArqueo') { produccion.splice(idx, 1); } 
+            else if(acc === 'editArqueo') { const p = produccion[idx]; document.getElementById('prodIdx').value = idx; document.getElementById('prodIni').value = p.ini; document.getElementById('prodFin').value = p.fin; calcularProdReal(); } 
+            save(); mSec.hide(); render(); 
+        }
+
+        function sugerirPrecio() { const p = inventario.find(i => i.id == document.getElementById('vProd').value); if(p) document.getElementById('vPrec').value = p.precio; }
+        function addCarrito() { const p = inventario.find(i => i.id == document.getElementById('vProd').value); if(!p) return; const cant = parseInt(document.getElementById('vCant').value); const prec = parseFloat(document.getElementById('vPrec').value); carrito.push({ id: p.id, nombre: p.nombre, cant, precio: prec, sub: cant * prec }); renderCart(); }
+        function renderCart() { let h = ''; let t = 0; carrito.forEach((c,i) => { t += c.sub; h += `<tr><td>${c.nombre}</td><td>${c.cant}</td><td>$${c.sub.toLocaleString('de-DE')}</td><td class="text-end"><button class="btn-action btn-del" onclick="carrito.splice(${i},1);renderCart()"><i class="bi bi-trash"></i></button></td></tr>`; }); document.getElementById('cartBody').innerHTML = h; document.getElementById('totalDisp').innerText = `$${t.toLocaleString('de-DE')}`; }
+        function render() {
+            document.getElementById('vProd').innerHTML = '<option value="">--</option>' + inventario.map(p => `<option value="${p.id}">${p.nombre}</option>`).join('');
+            document.getElementById('dataCli').innerHTML = clientes.map(c => `<option value="${c.nombre}">`).join('');
+            document.getElementById('invBody').innerHTML = inventario.map((p,i) => `<tr><td class="fw-bold">${p.nombre}</td><td>$${p.precio.toLocaleString('de-DE')}</td><td>${p.stock}</td><td class="text-end px-4"><button class="btn-action btn-edit" onclick="abrirModProd(${i})"><i class="bi bi-pencil"></i></button><button class="btn-action btn-del" onclick="solicitarSeguridad('delProd', ${i})"><i class="bi bi-trash"></i></button></td></tr>`).join('');
+            document.getElementById('cliBody').innerHTML = clientes.map((c,i) => `<tr><td class="fw-bold">${c.nombre}</td><td>${c.iden}</td><td>${c.tel}</td><td>${c.city}</td><td class="text-end px-4"><button class="btn-action btn-edit" onclick="abrirModCli(${i})"><i class="bi bi-pencil"></i></button><button class="btn-action btn-del" onclick="solicitarSeguridad('delCli', ${i})"><i class="bi bi-trash"></i></button></td></tr>`).join('');
+            document.getElementById('histBody').innerHTML = ventas.slice().reverse().map((v, i) => { let rIdx = ventas.length - 1 - i; return `<tr><td class="fw-bold text-primary">${v.id}</td><td><small>${v.fecha}<br>${v.hora}</small></td><td>${v.cliente}</td><td>$${v.total.toLocaleString('de-DE')}</td><td>$${v.abono.toLocaleString('de-DE')}</td><td class="text-danger">$${v.deuda.toLocaleString('de-DE')}</td><td><span class="status-pill ${v.estado === 'DEBE' ? 'status-debe' : 'status-pago'}">${v.estado}</span></td><td class="text-center"><button class="btn-action btn-print" onclick="imprimirFactura(ventas[${rIdx}])"><i class="bi bi-printer"></i></button><button class="btn-action btn-edit" onclick="solicitarSeguridad('editVenta', ${rIdx})"><i class="bi bi-pencil-square"></i></button><button class="btn-action btn-del" onclick="solicitarSeguridad('delVenta', ${rIdx})"><i class="bi bi-trash"></i></button></td></tr>`; }).join('');
+            document.getElementById('prodHistBody').innerHTML = produccion.slice().reverse().map((p,i) => { let rIdx = produccion.length - 1 - i; return `<tr><td><small>${p.fecha}<br>${p.hora}</small></td><td>${p.ini}</td><td>${p.ven}</td><td>${p.fin}</td><td class="fw-bold text-success">${p.res}</td><td class="text-end"><button class="btn-action btn-edit" onclick="solicitarSeguridad('editArqueo', ${rIdx})"><i class="bi bi-pencil"></i></button><button class="btn-action btn-del" onclick="solicitarSeguridad('delArqueo', ${rIdx})"><i class="bi bi-trash"></i></button></td></tr>`; }).join('');
+            document.getElementById('cfgNom').value = config.nombre; document.getElementById('cfgNit').value = config.nit; document.getElementById('cfgDir').value = config.dir; document.getElementById('cfgTel').value = config.tel;
+        }
+        function save() { localStorage.setItem('v45_inv', JSON.stringify(inventario)); localStorage.setItem('v45_cli', JSON.stringify(clientes)); localStorage.setItem('v45_ven', JSON.stringify(ventas)); localStorage.setItem('v45_num', JSON.stringify(numFactura)); localStorage.setItem('v45_pro', JSON.stringify(produccion)); localStorage.setItem('v45_cfg', JSON.stringify(config)); }
+        function abrirModProd(idx=-1){ document.getElementById('pIdx').value=idx; if(idx!==-1){const p=inventario[idx]; document.getElementById('pNom').value=p.nombre; document.getElementById('pPre').value=p.precio; document.getElementById('pSto').value=p.stock;} else {document.getElementById('pNom').value=''; document.getElementById('pPre').value=''; document.getElementById('pSto').value='';} mProd.show(); }
+        function saveProd(){ const idx=parseInt(document.getElementById('pIdx').value); const p={id:idx===-1?Date.now():inventario[idx].id, nombre:document.getElementById('pNom').value, precio:parseFloat(document.getElementById('pPre').value), stock:parseInt(document.getElementById('pSto').value)}; if(idx===-1) inventario.push(p); else inventario[idx]=p; save(); mProd.hide(); render(); }
+        function abrirModCli(idx=-1){ document.getElementById('cIdx').value=idx; if(idx!==-1){const c=clientes[idx]; document.getElementById('cNom').value=c.nombre; document.getElementById('cIden').value=c.iden; document.getElementById('cTel').value=c.tel; document.getElementById('cDir').value=c.dir; document.getElementById('cCity').value=c.city;} else {document.getElementById('cNom').value=''; document.getElementById('cIden').value=''; document.getElementById('cTel').value=''; document.getElementById('cDir').value=''; document.getElementById('cCity').value='';} mCli.show(); }
+        function saveCli(){ const idx=parseInt(document.getElementById('cIdx').value); const c={ nombre:document.getElementById('cNom').value, iden:document.getElementById('cIden').value, tel:document.getElementById('cTel').value, dir:document.getElementById('cCity').value, city:document.getElementById('cCity').value }; if(idx===-1) clientes.push(c); else clientes[idx]=c; save(); mCli.hide(); render(); }
+        function guardarConfig(){ config={nombre:document.getElementById('cfgNom').value, nit:document.getElementById('cfgNit').value, dir:document.getElementById('cfgDir').value, tel:document.getElementById('cfgTel').value}; save(); alert("Datos guardados"); }
+        function filtrar() { const f = document.getElementById('filtro').value.toLowerCase(); document.querySelectorAll('#histBody tr').forEach(tr => { tr.style.display = tr.innerText.toLowerCase().includes(f) ? '' : 'none'; }); }
+        function obtenerValorPuro(str) { return parseFloat(str.toString().replace(/\./g, "")) || 0; }
+        function formatearEntradaAbono(input) { let valor = input.value.replace(/\D/g, ""); input.value = valor.replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
+        function exportarExcel() { let csv = "Factura;Fecha;Hora;Cliente;Total;Abono;Deuda;Estado\n"; ventas.forEach(v => { csv += `${v.id};${v.fecha};${v.hora};${v.cliente};${v.total};${v.abono};${v.deuda};${v.estado}\n`; }); const b = new Blob(["\ufeff"+csv], {type:'text/csv'}); const a = document.createElement('a'); a.href=URL.createObjectURL(b); a.download='Reporte_Cascada.csv'; a.click(); }
+        render();
+    </script>
+</body>
+</html>
