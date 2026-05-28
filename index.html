@@ -2,19 +2,27 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0">
     <title>CASCADA DEL CESAR | Cloud Suite V6.6</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
         :root { --primario: #0ea5e9; --oscuro: #0f172a; --fondo: #f8fafc; --acent: #38bdf8; }
-        body { background-color: var(--fondo); font-family: 'Inter', system-ui, sans-serif; color: #1e293b; }
-        .sidebar { width: 280px; height: 100vh; position: fixed; background: var(--oscuro); color: white; z-index: 1000; }
+        body { background-color: var(--fondo); font-family: 'Inter', system-ui, sans-serif; color: #1e293b; overflow-x: hidden; }
+        
+        /* DISEÑO DE BARRA LATERAL (ESCRITORIO) */
+        .sidebar { width: 280px; height: 100vh; position: fixed; background: var(--oscuro); color: white; z-index: 1000; transition: transform 0.3s ease; }
         .nav-group-title { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; color: #64748b; padding: 25px 30px 10px; font-weight: 800; }
         .sidebar .nav-link { color: #94a3b8; padding: 12px 30px; display: flex; align-items: center; text-decoration: none; cursor: pointer; border-left: 4px solid transparent; transition: 0.3s; }
         .sidebar .nav-link:hover, .sidebar .nav-link.active { background: #1e293b; color: var(--acent); border-left-color: var(--acent); }
         .sidebar .nav-link i { font-size: 1.2rem; margin-right: 15px; }
-        .main-content { margin-left: 280px; padding: 40px; }
+        
+        /* CONTENIDO PRINCIPAL (ESCRITORIO) */
+        .main-content { margin-left: 280px; padding: 40px; transition: margin 0.3s ease; }
+        
+        /* BOTÓN MENÚ MÓVIL (OCULTO EN PC) */
+        .mobile-toggle { display: none; position: fixed; top: 15px; right: 15px; z-index: 1100; padding: 10px 15px; font-size: 1.2rem; }
+
         .card-pro { border: none; border-radius: 20px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); background: white; margin-bottom: 30px; border: 1px solid rgba(0,0,0,0.03); }
         .page-section { display: none; animation: slideUp 0.4s ease-out; }
         .page-section.active { display: block; }
@@ -34,11 +42,26 @@
         @keyframes pulse { 0% { opacity: 0.8; } 50% { opacity: 1; } 100% { opacity: 0.8; } }
         @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         @media print { .no-print { display: none !important; } }
+
+        /* RESPONSIVIDAD ESTRICTA PARA CELULARES Y APPS_GEYSER */
+        @media (max-width: 991px) {
+            .mobile-toggle { display: block; }
+            .sidebar { transform: translateX(-100%); width: 260px; box-shadow: 5px 0 15px rgba(0,0,0,0.2); }
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-left: 0; padding: 20px; pt: 70px; padding-top: 75px; }
+            .card-pro { padding: 15px !important; border-radius: 14px; }
+            h3 { font-size: 1.4rem; }
+            .dash-card { padding: 15px; margin-bottom: 5px; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="sidebar d-flex flex-column no-print">
+    <button class="btn btn-info text-white mobile-toggle no-print shadow" onclick="toggleMenu()">
+        <i class="bi bi-list"></i> Menú
+    </button>
+
+    <div id="sidebarMenu" class="sidebar d-flex flex-column no-print">
         <div class="p-4 mb-2">
             <h4 class="fw-bold mb-0 text-info">CASCADA</h4>
             <div class="d-flex align-items-center justify-content-between mt-1">
@@ -48,13 +71,13 @@
         </div>
         <nav class="flex-grow-1">
             <div class="nav-group-title">Operaciones</div>
-            <a class="nav-link" onclick="showSection('ventas')"><i class="bi bi-cart-fill"></i> Nueva Venta</a>
-            <a class="nav-link" onclick="showSection('produccion')"><i class="bi bi-hammer"></i> Producción Real</a>
-            <a class="nav-link" onclick="showSection('inventario')"><i class="bi bi-box-seam-fill"></i> Inventario</a>
-            <a class="nav-link" onclick="showSection('clientes')"><i class="bi bi-people-fill"></i> Clientes</a>
+            <a class="nav-link" onclick="navegarHacia('ventas')"><i class="bi bi-cart-fill"></i> Nueva Venta</a>
+            <a class="nav-link" onclick="navegarHacia('produccion')"><i class="bi bi-hammer"></i> Producción Real</a>
+            <a class="nav-link" onclick="navegarHacia('inventario')"><i class="bi bi-box-seam-fill"></i> Inventario</a>
+            <a class="nav-link" onclick="navegarHacia('clientes')"><i class="bi bi-people-fill"></i> Clientes</a>
             <div class="nav-group-title">Administración</div>
-            <a class="nav-link active" onclick="showSection('dashboard')"><i class="bi bi-journal-text"></i> Cartera/Ventas</a>
-            <a class="nav-link" onclick="showSection('config')"><i class="bi bi-gear-fill"></i> Empresa</a>
+            <a class="nav-link active" onclick="navegarHacia('dashboard')"><i class="bi bi-journal-text"></i> Cartera/Ventas</a>
+            <a class="nav-link" onclick="navegarHacia('config')"><i class="bi bi-gear-fill"></i> Empresa</a>
         </nav>
         <div class="p-4"><button class="btn btn-outline-info btn-sm w-100" onclick="exportarExcel()"><i class="bi bi-download me-2"></i>Excel</button></div>
     </div>
@@ -72,7 +95,9 @@
                             <div class="col-md-3"><label class="small fw-bold">PRECIO UNIDAD</label><input type="number" id="vPrec" class="form-control bg-light border-0"></div>
                             <div class="col-md-2 d-flex align-items-end"><button class="btn btn-primary w-100 py-2" onclick="addCarrito()"><i class="bi bi-plus-lg"></i></button></div>
                         </div>
-                        <table class="table align-middle"><thead><tr><th>Detalle</th><th>Cant.</th><th>Subtotal</th><th></th></tr></thead><tbody id="cartBody"></tbody></table>
+                        <div class="table-responsive">
+                            <table class="table align-middle"><thead><tr><th>Detalle</th><th>Cant.</th><th>Subtotal</th><th></th></tr></thead><tbody id="cartBody"></tbody></table>
+                        </div>
                     </div>
                 </div>
                 <div class="col-lg-4">
@@ -180,9 +205,9 @@
                 <div class="mt-3 p-3 bg-light rounded-3 border">
                     <span class="small fw-bold text-uppercase d-block text-muted mb-2"><i class="bi bi-calculator me-1"></i> Unidades vendidas en el filtro seleccionado:</span>
                     <div class="d-flex flex-wrap gap-4 font-monospace">
-                        <div><i class="bi bi-droplet-fill text-primary"></i> AGUA VENDIDA: <strong class="text-dark border-bottom border-2 border-primary" id="historiaAgua">0</strong> pacas</div>
-                        <div><i class="bi bi-snow2 text-info"></i> HIELO VENDIDO: <strong class="text-dark border-bottom border-2 border-info" id="historiaHielo">0</strong> pacas</div>
-                        <div><i class="bi bi-barrel-fill text-secondary"></i> BOTELLÓN VENDIDO: <strong class="text-dark border-bottom border-2 border-secondary" id="historiaBotellon">0</strong> unds</div>
+                        <div><i class="bi bi-droplet-fill text-primary"></i> AGUA: <strong class="text-dark border-bottom border-2 border-primary" id="historiaAgua">0</strong> pacas</div>
+                        <div><i class="bi bi-snow2 text-info"></i> HIELO: <strong class="text-dark border-bottom border-2 border-info" id="historiaHielo">0</strong> pacas</div>
+                        <div><i class="bi bi-barrel-fill text-secondary"></i> BOTELLÓN: <strong class="text-dark border-bottom border-2 border-secondary" id="historiaBotellon">0</strong> unds</div>
                     </div>
                 </div>
             </div>
@@ -203,22 +228,24 @@
                 <button class="btn btn-dark" onclick="abrirModProd()">+ Nuevo Producto</button>
             </div>
             <div class="card-pro overflow-hidden shadow-sm">
-                <table class="table align-middle mb-0">
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Precio</th>
-                            <th style="width: 140px;">Stock Real</th>
-                            <th style="width: 260px;">¿Cuánto deseas agregar?</th>
-                            <th class="text-end px-4">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="invBody"></tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Precio</th>
+                                <th style="width: 140px;">Stock Real</th>
+                                <th style="width: 260px;">¿Cuánto deseas agregar?</th>
+                                <th class="text-end px-4">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="invBody"></tbody>
+                    </table>
+                </div>
             </div>
         </section>
 
-        <section id="clientes" class="page-section"><div class="d-flex justify-content-between mb-4"><h3 class="fw-bold">Clientes</h3><button class="btn btn-dark" onclick="abrirModCli()">+ Nuevo Cliente</button></div><div class="card-pro overflow-hidden"><table class="table align-middle mb-0"><thead><tr><th>Nombre</th><th>ID / Cédula</th><th>Teléfono</th><th>Ciudad</th><th class="text-end px-4">Acciones</th></tr></thead><tbody id="cliBody"></tbody></table></div></section>
+        <section id="clientes" class="page-section"><div class="d-flex justify-content-between mb-4"><h3 class="fw-bold">Clientes</h3><button class="btn btn-dark" onclick="abrirModCli()">+ Nuevo Cliente</button></div><div class="card-pro overflow-hidden"><div class="table-responsive"><table class="table align-middle mb-0"><thead><tr><th>Nombre</th><th>ID / Cédula</th><th>Teléfono</th><th>Ciudad</th><th class="text-end px-4">Acciones</th></tr></thead><tbody id="cliBody"></tbody></table></div></div></section>
         
         <section id="config" class="page-section"><h3 class="fw-bold mb-4">Datos del Negocio</h3><div class="card-pro p-4 mt-3" style="max-width: 500px;"><div class="mb-3"><label class="small fw-bold">RAZÓN SOCIAL</label><input type="text" id="cfgNom" class="form-control"></div><div class="mb-3"><label class="small fw-bold">NIT</label><input type="text" id="cfgNit" class="form-control"></div><div class="mb-3"><label class="small fw-bold">DIRECCIÓN</label><input type="text" id="cfgDir" class="form-control"></div><div class="mb-4"><label class="small fw-bold">TELÉFONO</label><input type="text" id="cfgTel" class="form-control"></div><button class="btn btn-primary w-100 py-3 fw-bold" onclick="guardarConfig()">GUARDAR DATOS</button></div></section>
     </div>
@@ -226,7 +253,7 @@
     <div class="modal fade" id="modSec" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-sm modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header bg-danger text-white border-0"><h6 class="m-0">Seguridad</h6></div><div class="modal-body text-center"><input type="hidden" id="secAction"><input type="hidden" id="secIdx"><p id="secMsg" class="small fw-bold text-muted mb-3"></p><input type="password" id="secPass" class="form-control text-center mb-3" placeholder="CLAVE"><button type="button" class="btn btn-danger w-100 fw-bold" onclick="ejecutarAccionSecure()">CONFIRMAR</button></div></div></div></div>
     <div class="modal fade" id="modProd" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-body p-4"><input type="hidden" id="pIdx"><h6>Ficha Producto</h6><input type="text" id="pNom" class="form-control mb-2" placeholder="Nombre"><input type="number" id="pPre" class="form-control mb-2" placeholder="Precio"><input type="number" id="pSto" class="form-control mb-3" placeholder="Stock Inicial"><button type="button" class="btn btn-primary w-100" onclick="saveProd()">Guardar</button></div></div></div></div>
     <div class="modal fade" id="modCli" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-body p-4"><input type="hidden" id="cIdx"><h6>Ficha Cliente</h6><input type="text" id="cNom" class="form-control mb-2" placeholder="NOMBRE"><input type="text" id="cIden" class="form-control mb-2" placeholder="CEDULA / ID"><input type="text" id="cTel" class="form-control mb-2" placeholder="TELEFONO"><input type="text" id="cDir" class="form-control mb-2" placeholder="DIRECCION"><input type="text" id="cCity" class="form-control mb-3" placeholder="CIUDAD"><button type="button" class="btn btn-primary w-100" onclick="saveCli()">Guardar Cliente</button></div></div></div></div>
-    <div class="modal fade" id="modDetalleVenta" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header bg-dark text-white"><h6 class="m-0" id="detTitle">Detalle de Factura</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body"><table class="table table-sm align-middle"><thead><tr><th>Producto</th><th>Cant.</th><th>Precio</th><th>Subtotal</th></tr></thead><tbody id="detBody"></tbody></table><div class="text-end fw-bold border-top pt-2" id="detTotal"></div></div></div></div>
+    <div class="modal fade" id="modDetalleVenta" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header bg-dark text-white"><h6 class="m-0" id="detTitle">Detalle de Factura</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body"><div class="table-responsive"><table class="table table-sm align-middle"><thead><tr><th>Producto</th><th>Cant.</th><th>Precio</th><th>Subtotal</th></tr></thead><tbody id="detBody"></tbody></table></div><div class="text-end fw-bold border-top pt-2" id="detTotal"></div></div></div></div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -264,6 +291,17 @@
             mDet = new bootstrap.Modal(document.getElementById('modDetalleVenta'));
         });
 
+        // FUNCIONES DE CONTROL DE MENÚ RESPONSIVO (NUEVO)
+        function toggleMenu() {
+            document.getElementById('sidebarMenu').classList.toggle('open');
+        }
+
+        function navegarHacia(seccionId) {
+            showSection(seccionId);
+            // Si está en pantalla móvil, cierra el menú automáticamente al hacer clic en una opción
+            document.getElementById('sidebarMenu').classList.remove('open');
+        }
+
         // REPLICACIÓN EN TIEMPO REAL
         db.ref('inventario').on('value', snapshot => { inventario = snapshot.val() || []; render(); actualizarCalculosProduccion(); });
         db.ref('clientes').on('value', snapshot => { clientes = snapshot.val() || []; render(); });
@@ -276,29 +314,31 @@
             document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
             document.getElementById(id).classList.add('active');
+            
+            // Buscar cuál enlace del menú corresponde para marcarlo como activo
+            document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+                if(link.getAttribute('onclick').includes(id)) link.classList.add('active');
+            });
+
             if(id === 'produccion') { document.getElementById('prodIdx').value = "-1"; actualizarCalculosProduccion(); }
             if(id === 'dashboard') { calcularTotalesDia(); limpiarFiltrosAvanzados(); }
             render();
         }
 
-        // LÓGICA DE FILTROS SIMULTÁNEOS Y CONTADOR HISTÓRICO DE PACAS
+        // LÓGICA DE FILTROS SIMULTÁNEOS
         function aplicarFiltrosSimultaneos() {
             const queryCliente = document.getElementById('filtroCliente').value.toLowerCase().trim();
-            const queryFechaRaw = document.getElementById('filtroFecha').value; // Formato YYYY-MM-DD
+            const queryFechaRaw = document.getElementById('filtroFecha').value;
             
             let queryFechaFormateada = "";
             if (queryFechaRaw) {
                 const partes = queryFechaRaw.split('-');
-                queryFechaFormateada = `${parseInt(partes[2])}/${parseInt(partes[1])}/${partes[0]}`; // Convierte a D/M/YYYY como se guarda en firebase
+                queryFechaFormateada = `${parseInt(partes[2])}/${parseInt(partes[1])}/${partes[0]}`;
             }
 
             let acumuladoAgua = 0, acumuladoHielo = 0, acumuladoBotellon = 0;
 
-            // Recorremos todas las filas renderizadas en la tabla para esconder/mostrar y sumar
             document.querySelectorAll('#histBody tr').forEach(tr => {
-                const textoFila = tr.innerText.toLowerCase();
-                
-                // Extraemos los datos de la fila basados en su índice guardado en los botones
                 const botonDetalle = tr.querySelector('.btn-view');
                 if(!botonDetalle) return;
                 const idxVenta = parseInt(botonDetalle.getAttribute('onclick').match(/\d+/)[0]);
@@ -313,7 +353,6 @@
 
                 if (cumpleCliente && cumpleFecha) {
                     tr.style.display = '';
-                    // Sumamos las pacas vendidas de los elementos que cumplen los filtros
                     ventaObj.items.forEach(item => {
                         const nombreProd = item.nombre.toLowerCase();
                         if (nombreProd.includes("agua")) acumuladoAgua += (parseInt(item.cant) || 0);
@@ -325,7 +364,6 @@
                 }
             });
 
-            // Actualizamos los contadores históricos en pantalla
             if (document.getElementById('historiaAgua')) document.getElementById('historiaAgua').innerText = acumuladoAgua;
             if (document.getElementById('historiaHielo')) document.getElementById('historiaHielo').innerText = acumuladoHielo;
             if (document.getElementById('historiaBotellon')) document.getElementById('historiaBotellon').innerText = acumuladoBotellon;
@@ -348,19 +386,18 @@
             });
         }
 
-        // CONTROL DE ADICIÓN ESCRITA MANUAL EN INVENTARIO
         function agregarStockEscrito(idx) {
             const inputElement = document.getElementById(`addStockInput_${idx}`);
             if(!inputElement) return;
             let cantidadAAgregar = parseInt(inputElement.value);
-            if (isNaN(cantidadAAgregar) || cantidadAAgregar <= 0) return alert("Por favor ingresa una cantidad válida mayor a 0");
+            if (isNaN(cantidadAAgregar) || cantidadAAgregar <= 0) return alert("Por favor ingresa una cantidad válida");
             
             let stockActual = parseInt(inventario[idx].stock) || 0;
             inventario[idx].stock = stockActual + cantidadAAgregar;
             
             db.ref('inventario').set(inventario).then(() => {
                 inputElement.value = '';
-                alert("Inventario sumado y guardado correctamente.");
+                alert("Inventario actualizado.");
             });
         }
 
@@ -403,7 +440,6 @@
             if(document.getElementById('liveMontoTotal')) document.getElementById('liveMontoTotal').innerText = `${cargaTotalUnds} und`;
         }
 
-        // ARQUEO DE PRODUCCIÓN DE TURNOS
         function actualizarCalculosProduccion() {
             if (document.getElementById('prodIdx') && document.getElementById('prodIdx').value !== "-1") return;
 
@@ -603,7 +639,6 @@
                         </td>
                     </tr>`; 
                 }).join('');
-                // Una vez renderizadas, llamamos los filtros automáticos para mantener el estado visual correcto
                 aplicarFiltrosSimultaneos();
             }
             
@@ -626,7 +661,7 @@
                             <div class="small text-success fw-bold mt-1">Total Turno: +${p.res} unds</div>
                         </td>
                         <td class="text-end">
-                            <button type="button" class="btn-action btn-edit" title="Modificar" onclick="solicitarSeguridad('editArqueo', ${rIdx})"><i class="bi bi-pencil"></i></button>
+                            <button type="button" class="btn-action btn-edit" title="Modificar" onclick="solicitarSeguridad('editArqueo', ${rIdx})"><i class="bi bi-pencilsaveProd"></i class="bi bi-pencil"></button>
                             <button type="button" class="btn-action btn-del" onclick="solicitarSeguridad('delArqueo', ${rIdx})"><i class="bi bi-trash"></i></button>
                         </td>
                     </tr>`; 
