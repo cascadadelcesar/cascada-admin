@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0">
-    <title>CASCADA DEL CESAR | Cloud Suite V8.4.0</title>
+    <title>CASCADA DEL CESAR | Cloud Suite V8.5.0</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
@@ -24,10 +24,9 @@
             transition: transform 0.3s ease; 
             display: flex;
             flex-direction: column;
-            overflow-y: auto; /* Permite scroll vertical si las opciones no caben */
+            overflow-y: auto;
             -webkit-overflow-scrolling: touch;
         }
-        /* Personalización de barra de scroll sutil para el menú */
         .sidebar::-webkit-scrollbar { width: 6px; }
         .sidebar::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
         .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
@@ -37,10 +36,10 @@
         .sidebar .nav-link:hover, .sidebar .nav-link.active { background: #1e293b; color: var(--acent); border-left-color: var(--acent); }
         .sidebar .nav-link i { font-size: 1.2rem; margin-right: 15px; }
         
-        /* CONTENIDO PRINCIPAL (ESCRITORIO) */
+        /* CONTENIDO PRINCIPAL */
         .main-content { margin-left: 280px; padding: 40px; transition: margin 0.3s ease; }
         
-        /* BOTÓN MENÚ MÓVIL (OCULTO EN PC) */
+        /* BOTÓN MENÚ MÓVIL */
         .mobile-toggle { display: none; position: fixed; top: 15px; right: 15px; z-index: 1100; padding: 10px 15px; font-size: 1.2rem; }
 
         .card-pro { border: none; border-radius: 20px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); background: white; margin-bottom: 30px; border: 1px solid rgba(0,0,0,0.03); }
@@ -60,7 +59,6 @@
         .live-badge { animation: pulse 2s infinite; background-color: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; font-size: 0.85rem; }
         .prod-tag { font-size: 0.75rem; padding: 2px 6px; border-radius: 6px; background-color: #f1f5f9; color: #475569; font-weight: 600; display: inline-block; margin-top: 3px; }
         
-        /* Inputs con ojito incorporado */
         .password-container { position: relative; }
         .password-container .toggle-password-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #64748b; cursor: pointer; z-index: 10; }
 
@@ -220,6 +218,7 @@
                                 <thead>
                                     <tr>
                                         <th>Fecha/Hora</th>
+                                        <th>Responsable</th>
                                         <th>Inicial Total</th>
                                         <th>Ventas Total</th>
                                         <th>Final Total</th>
@@ -301,7 +300,7 @@
                                 <th>No.</th>
                                 <th>Fecha/Hora</th>
                                 <th>Cliente / Detalle Carga</th>
-                                <th>Despachador</th>
+                                <th>Despachador / Editor</th>
                                 <th class="hide-vendedor-table-cell hide-partner-money-cells">Total</th>
                                 <th class="hide-vendedor-table-cell hide-partner-money-cells">Abono</th>
                                 <th class="hide-vendedor-table-cell hide-partner-money-cells">Deuda</th>
@@ -454,17 +453,29 @@
             mDet = new bootstrap.Modal(document.getElementById('modDetalleVenta'));
             establecerFechaDeHoy(); 
             
-            // VERIFICACIÓN AUTOMÁTICA DE SESIÓN ACTIVA (EVITA SALIDAS EN F5)
+            // VERIFICACIÓN AUTOMÁTICA Y CIERRE TRAS 1 HORA DE INACTIVIDAD
+            verificarExpiracionSesion();
+        });
+
+        function verificarExpiracionSesion() {
             const sesionGuardada = localStorage.getItem('cascada_user_session');
             if (sesionGuardada) {
                 try {
-                    const parsedUser = JSON.parse(sesionGuardada);
-                    aplicarPerfilDeUsuario(parsedUser);
+                    const parsedData = JSON.parse(sesionGuardada);
+                    const horaActual = Date.now();
+                    const unaHoraEnMilisegundos = 3600000; // 1 Hora exacta
+                    
+                    if (parsedData.loginTimestamp && (horaActual - parsedData.loginTimestamp > unaHoraEnMilisegundos)) {
+                        alert("Tu sesión ha expirado tras 1 hora de actividad para permitir nuevos accesos. Por favor ingresa de nuevo.");
+                        cerrarSesion();
+                    } else {
+                        aplicarPerfilDeUsuario(parsedData.user, parsedData.loginTimestamp);
+                    }
                 } catch(e) {
                     localStorage.removeItem('cascada_user_session');
                 }
             }
-        });
+        }
 
         function togglePasswordVisibility(inputId) {
             const el = document.getElementById(inputId);
@@ -506,6 +517,7 @@
         }
 
         function navegarHacia(seccionId) {
+            verificarExpiracionSesion(); // Valida tiempo antes de saltar de pantalla
             if (usuarioSesionActiva) {
                 if (usuarioSesionActiva.rol === 'vendedor') {
                     if (seccionId === 'config' || seccionId === 'produccion' || seccionId === 'dashboard') {
@@ -540,7 +552,6 @@
             }
             renderUsuariosTabla();
             
-            // Si el usuario ya está conectado y la base de datos se actualiza, refrescar sus metadatos de rol si cambiaron
             if(usuarioSesionActiva) {
                 const refreshed = usuarios.find(usr => usr.nombre.toLowerCase() === usuarioSesionActiva.nombre.toLowerCase());
                 if(refreshed && refreshed.clave === usuarioSesionActiva.clave && refreshed.rol !== usuarioSesionActiva.rol) {
@@ -564,16 +575,16 @@
             if(u && u.clave === passIntroducida) {
                 document.getElementById('loginPass').value = '';
                 document.getElementById('loginUserInput').value = '';
-                aplicarPerfilDeUsuario(u);
+                aplicarPerfilDeUsuario(u, Date.now());
             } else {
                 alert("Usuario o Contraseña inválidos.");
             }
         }
 
-        function aplicarPerfilDeUsuario(u) {
+        function aplicarPerfilDeUsuario(u, timestamp = Date.now()) {
             usuarioSesionActiva = u;
-            // Guardar sesión de forma persistente en el dispositivo actual
-            localStorage.setItem('cascada_user_session', JSON.stringify(u));
+            // Se encapsula el usuario con su marca de tiempo exacta de login
+            localStorage.setItem('cascada_user_session', JSON.stringify({ user: u, loginTimestamp: timestamp }));
             
             document.getElementById('loginScreen').style.setProperty('display', 'none', 'important');
             document.getElementById('userActiveBadge').innerHTML = `<i class="bi bi-person-fill me-1"></i>${u.nombre.toUpperCase()}`;
@@ -587,7 +598,6 @@
             document.querySelectorAll('.hide-partner-block').forEach(el => el.style.display = '');
             document.querySelectorAll('.hide-vendedor-table-cell').forEach(el => el.style.display = '');
 
-            // Determinar sección activa por defecto basándonos en la sección ya activa o rol
             const currentActiveSec = document.querySelector('.page-section.active');
             let targetSection = currentActiveSec ? currentActiveSec.id : 'dashboard';
 
@@ -617,7 +627,7 @@
 
         function cerrarSesion() {
             usuarioSesionActiva = null;
-            localStorage.removeItem('cascada_user_session'); // Destruir token local
+            localStorage.removeItem('cascada_user_session'); 
             document.getElementById('loginScreen').style.setProperty('display', 'flex', 'important');
             setTimeout(() => { document.getElementById('loginUserInput').focus(); }, 150);
         }
@@ -631,7 +641,10 @@
 
             usuarios[idx].clave = nuevaClave;
             usuarioSesionActiva.clave = nuevaClave;
-            localStorage.setItem('cascada_user_session', JSON.stringify(usuarioSesionActiva));
+            
+            const sesionActual = JSON.parse(localStorage.getItem('cascada_user_session'));
+            sesionActual.user = usuarioSesionActiva;
+            localStorage.setItem('cascada_user_session', JSON.stringify(sesionActual));
 
             db.ref('usuarios').set(usuarios).then(() => {
                 document.getElementById('myNewPassInput').value = '';
@@ -833,6 +846,7 @@
         }
 
         function agregarStockEscrito(idx) {
+            verificarExpiracionSesion();
             if (usuarioSesionActiva && usuarioSesionActiva.rol === 'partner') return;
             const inputElement = document.getElementById(`addStockInput_${idx}`);
             if(!inputElement) return;
@@ -842,13 +856,18 @@
             let stockActual = parseInt(inventario[idx].stock) || 0;
             inventario[idx].stock = stockActual + cantidadAAgregar;
             
+            // RASTREO EN CONSOLA / LOG LOCAL DE QUIÉN MODIFICÓ EL STOCK DIRECTO
+            const operadorActual = usuarioSesionActiva ? usuarioSesionActiva.nombre : "Sistema";
+            console.log(`[AUDITORÍA] El usuario ${operadorActual} agregó ${cantidadAAgregar} unidades a ${inventario[idx].nombre}`);
+
             db.ref('inventario').set(inventario).then(() => {
                 inputElement.value = '';
-                alert("Inventario actualizado con éxito.");
+                alert(`Inventario modificado exitosamente por el usuario: ${operadorActual.toUpperCase()}`);
             });
         }
 
         function actualizarStockDirectoInput(idx, valor) {
+            verificarExpiracionSesion();
             if (usuarioSesionActiva && usuarioSesionActiva.rol === 'partner') {
                 alert("Modificación denegada: El perfil Partner no puede alterar stock.");
                 render();
@@ -919,6 +938,7 @@
         }
 
         function guardarArqueoSinClave() {
+            verificarExpiracionSesion();
             if(usuarioSesionActiva && usuarioSesionActiva.rol === 'partner') return;
             const pIdx = parseInt(document.getElementById('prodIdx').value);
             
@@ -955,10 +975,14 @@
                 const finalBot = parseFloat(document.getElementById('prodFinBot').value) || 0;
                 const iniBot = parseFloat(document.getElementById('prodIniBot').value) || 0;
 
+                // ASIGNACIÓN DE AUDITORÍA: GUARDA QUIÉN CREÓ EL ARQUEO ORIGINAL
+                const responsableArqueo = usuarioSesionActiva ? usuarioSesionActiva.nombre : "General";
+
                 const obj = { 
                     fecha: fechaFinalArqueo, 
                     hora: hoy.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
                     ini, ven, fin, res,
+                    usuario: responsableArqueo,
                     detAgua: (finalAgua + ventasTurnoAgua) - iniAgua, 
                     detHielo: (finalHielo + ventasTurnoHielo) - iniHielo,
                     detBotellon: (finalBot + ventasTurnoBotellon) - iniBot,
@@ -986,7 +1010,7 @@
                 establecerFechaDeHoy(); 
                 actualizarCalculosProduccion();
                 render(); 
-                alert("Arqueo saved successfully.");
+                alert(`Arqueo registrado en la nube por el usuario: ${responsableArqueo.toUpperCase()}`);
             }
         }
 
@@ -1004,8 +1028,10 @@
             if(document.getElementById('secPass').value !== CLAVE_ADMIN) return alert("Clave Incorrecta"); 
             const acc = document.getElementById('secAction').value; 
             const idx = parseInt(document.getElementById('secIdx').value); 
+            const adminEjecutor = usuarioSesionActiva ? usuarioSesionActiva.nombre : "Admin";
             
             if(acc === 'delVenta') { 
+                console.log(`[AUDITORÍA] La venta ${ventas[idx].id} fue eliminada por el usuario ${adminEjecutor}`);
                 ventas[idx].items.forEach(c => { const p = inventario.find(i => i.id == c.id); if(p) p.stock += c.cant; }); 
                 ventas.splice(idx,1); 
                 db.ref('inventario').set(inventario); db.ref('ventas').set(ventas); 
@@ -1018,13 +1044,14 @@
                 indicesAEliminar.forEach(originalIdx => {
                     const v = ventas[originalIdx];
                     if(v) {
+                        console.log(`[AUDITORÍA] Borrado masivo: Venta ${v.id} eliminada por ${adminEjecutor}`);
                         v.items.forEach(c => { const p = inventario.find(i => i.id == c.id); if(p) p.stock += c.cant; });
                         ventas.splice(originalIdx, 1);
                     }
                 });
                 document.getElementById('checkTodo').checked = false;
                 db.ref('inventario').set(inventario); db.ref('ventas').set(ventas);
-                alert("Facturas de venta eliminadas con éxito.");
+                alert(`Facturas de venta eliminadas con éxito por el administrador: ${adminEjecutor.toUpperCase()}`);
             }
             else if(acc === 'editVenta') { 
                 const v = ventas[idx]; 
@@ -1032,22 +1059,34 @@
                 document.getElementById('vCliente').value = v.cliente; 
                 carrito = [...v.items]; 
                 
+                // RASTREO DE EDICIÓN: Conserva quién creó y concatena el nombre del editor
+                let usuarioFinalEditor = v.usuario || "Gral";
+                if(!usuarioFinalEditor.includes("Editado por")) {
+                    usuarioFinalEditor += ` (Editado por: ${adminEjecutor})`;
+                }
+
                 editVentaOriginalMetadata = {
                     id: v.id, fecha: v.fecha, hora: v.hora, posicionOriginal: idx, arqueado: v.arqueado || false,
-                    usuario: v.usuario || "Desconocido"
+                    usuario: usuarioFinalEditor
                 };
 
                 if (v.fecha) {
                     const partes = v.fecha.split('/');
-                    document.getElementById('vFechaManual').value = `${partes[2]}-${partes[1].padStart(2, '0')}-${partes[0].padStart(2, '0')}`;
+                    document.getElementById('vFechaManual').value = `${partes[2]}-${partes[ mes = partes[1].padStart(2, '0')]}-${partes[0].padStart(2, '0')}`;
                 }
 
                 ventas.splice(idx,1); 
                 db.ref('inventario').set(inventario); db.ref('ventas').set(ventas); 
                 showSection('ventas'); renderCart(); 
             } 
-            else if(acc === 'delProd') { inventario.splice(idx, 1); db.ref('inventario').set(inventario); } 
-            else if(acc === 'delCli') { clientes.splice(idx, 1); db.ref('clientes').set(clientes); } 
+            else if(acc === 'delProd') { 
+                console.log(`[AUDITORÍA] Producto ${inventario[idx].nombre} eliminado por ${adminEjecutor}`);
+                inventario.splice(idx, 1); db.ref('inventario').set(inventario); 
+            } 
+            else if(acc === 'delCli') { 
+                console.log(`[AUDITORÍA] Cliente ${clientes[idx].nombre} eliminado por ${adminEjecutor}`);
+                clientes.splice(idx, 1); db.ref('clientes').set(clientes); 
+            } 
             else if(acc === 'prodSave') { 
                 const p = produccion[idx];
                 const iniAgua = parseFloat(document.getElementById('prodIniAgua').value) || 0;
@@ -1062,6 +1101,9 @@
                 p.metaIniBot = iniBot; p.metaFinBot = finBot;
                 p.ini = iniAgua + iniHielo + iniBot; p.fin = finAgua + finHielo + finBot;
                 
+                // RASTREO: Registra qué administrador modificó el arqueo histórico
+                p.usuario = `${p.usuario || 'Gral'} (Modificado por: ${adminEjecutor})`;
+
                 const targetFecha = p.fecha;
                 let unidadesTotalesVendidasFecha = 0, ventasTurnoAgua = 0, ventasTurnoHielo = 0, ventasTurnoBotellon = 0;
                 
@@ -1099,9 +1141,12 @@
                 document.getElementById('prodIniBot').value = 0; document.getElementById('prodFinBot').value = 0;
 
                 establecerFechaDeHoy(); actualizarCalculosProduccion();
-                alert("Arqueo actualizado.");
+                alert(`Arqueo histórico modificado por: ${adminEjecutor.toUpperCase()}`);
             } 
-            else if(acc === 'delArqueo') { produccion.splice(idx, 1); db.ref('produccion').set(produccion); } 
+            else if(acc === 'delArqueo') { 
+                console.log(`[AUDITORÍA] Arqueo del día ${produccion[idx].fecha} eliminado por ${adminEjecutor}`);
+                produccion.splice(idx, 1); db.ref('produccion').set(produccion); 
+            } 
             else if(acc === 'editArqueo') { 
                 const p = produccion[idx]; document.getElementById('prodIdx').value = idx; 
                 document.getElementById('prodIniAgua').value = p.metaIniAgua || 0;
@@ -1127,11 +1172,12 @@
         function imprimirFactura(v) { 
             const isRestringido = (usuarioSesionActiva && (usuarioSesionActiva.rol === 'vendedor' || usuarioSesionActiva.rol === 'partner'));
             const w = window.open('', '_blank'); 
-            w.document.write(`<html><body onload="window.print();window.close()" style="width:280px;font-family:monospace;padding:10px;"><center><strong>${config.nombre}</strong><br>NIT: ${config.nit}<br>${config.dir}<br>Tel: ${config.tel}<br>----------------------------<br>FACTURA: ${v.id}<br>FECHA: ${v.fecha} ${v.hora}<br>DESPACHADO: ${v.usuario || 'Gral'}<br>CLIENTE: ${v.cliente}<br>----------------------------</center><table style="width:100%;font-size:12px;">${v.items.map(i => `<tr><td>${i.nombre} x${i.cant}</td><td align="right" style="${isRestringido ? 'display:none;':''}">$${i.sub.toLocaleString('de-DE')}</td></tr>`).join('')}</table><div style="${isRestringido ? 'display:none;':''}">----------------------------<br><strong>TOTAL: <span style="float:right">$${v.total.toLocaleString('de-DE')}</span></strong><br>ABONO: <span style="float:right">$${v.abono.toLocaleString('de-DE')}</span><br>SALDO: <span style="float:right">$${v.deuda.toLocaleString('de-DE')}</span></div>----------------------------<br><center>Gracias por su compra</center></body></html>`); 
+            w.document.write(`<html><body onload="window.print();window.close()" style="width:280px;font-family:monospace;padding:10px;"><center><strong>${config.nombre}</strong><br>NIT: ${config.nit}<br>${config.dir}<br>Tel: ${config.tel}<br>----------------------------<br>FACTURA: ${v.id}<br>FECHA: ${v.fecha} ${v.hora}<br>OPERADOR: ${v.usuario || 'Gral'}<br>CLIENTE: ${v.cliente}<br>----------------------------</center><table style="width:100%;font-size:12px;">${v.items.map(i => `<tr><td>${i.nombre} x${i.cant}</td><td align="right" style="${isRestringido ? 'display:none;':''}">$${i.sub.toLocaleString('de-DE')}</td></tr>`).join('')}</table><div style="${isRestringido ? 'display:none;':''}">----------------------------<br><strong>TOTAL: <span style="float:right">$${v.total.toLocaleString('de-DE')}</span></strong><br>ABONO: <span style="float:right">$${v.abono.toLocaleString('de-DE')}</span><br>SALDO: <span style="float:right">$${v.deuda.toLocaleString('de-DE')}</span></div>----------------------------<br><center>Gracias por su compra</center></body></html>`); 
             w.document.close(); 
         }
         
         function procesarFactura() { 
+            verificarExpiracionSesion();
             if(carrito.length === 0) return alert("Carrito vacío"); 
             const t = carrito.reduce((a,b)=>a+b.sub,0); 
             const a = obtenerValorPuro(document.getElementById('vAbono').value); 
@@ -1301,6 +1347,7 @@
                     let rIdx = produccion.length - 1 - i; 
                     return `<tr>
                         <td><small>${p.fecha}<br>${p.hora}</small></td>
+                        <td><span class="badge bg-light text-secondary border fw-bold text-uppercase">${p.usuario || 'General'}</span></td>
                         <td>${p.ini}</td>
                         <td>${p.ven}</td>
                         <td><strong>${p.fin}</strong></td>
