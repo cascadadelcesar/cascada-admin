@@ -3,46 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0">
-    <title>CASCADA DEL CESAR | Cloud Suite V8.5.0</title>
+    <title>CASCADA DEL CESAR</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
         :root { --primario: #0ea5e9; --oscuro: #0f172a; --fondo: #f8fafc; --acent: #38bdf8; }
         body { background-color: var(--fondo); font-family: 'Inter', system-ui, sans-serif; color: #1e293b; overflow-x: hidden; }
-        
-        /* PANTALLAS DE LOGUEO Y PERFIL */
         #loginScreen { position: fixed; top:0; left:0; width:100vw; height:100vh; background: var(--oscuro); z-index: 5000; display: flex; align-items: center; justify-content: center; }
-        
-        /* DISEÑO DE BARRA LATERAL CON SCROLL INTELIGENTE */
-        .sidebar { 
-            width: 280px; 
-            height: 100vh; 
-            position: fixed; 
-            background: var(--oscuro); 
-            color: white; 
-            z-index: 1000; 
-            transition: transform 0.3s ease; 
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-        .sidebar::-webkit-scrollbar { width: 6px; }
-        .sidebar::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
-        .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
-
-        .nav-group-title { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; color: #64748b; padding: 20px 30px 10px; font-weight: 800; }
+        .sidebar { width: 280px; height: 100vh; position: fixed; background: var(--oscuro); color: white; z-index: 1000; transition: transform 0.3s ease; display: flex; flex-direction: column; overflow-y: auto; }
         .sidebar .nav-link { color: #94a3b8; padding: 12px 30px; display: flex; align-items: center; text-decoration: none; cursor: pointer; border-left: 4px solid transparent; transition: 0.3s; }
         .sidebar .nav-link:hover, .sidebar .nav-link.active { background: #1e293b; color: var(--acent); border-left-color: var(--acent); }
         .sidebar .nav-link i { font-size: 1.2rem; margin-right: 15px; }
-        
-        /* CONTENIDO PRINCIPAL */
+        .nav-group-title { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; color: #64748b; padding: 20px 30px 10px; font-weight: 800; }
         .main-content { margin-left: 280px; padding: 40px; transition: margin 0.3s ease; }
-        
-        /* BOTÓN MENÚ MÓVIL */
         .mobile-toggle { display: none; position: fixed; top: 15px; right: 15px; z-index: 1100; padding: 10px 15px; font-size: 1.2rem; }
-
-        .card-pro { border: none; border-radius: 20px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); background: white; margin-bottom: 30px; border: 1px solid rgba(0,0,0,0.03); }
+        .card-pro { border: none; border-radius: 20px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); background: white; margin-bottom: 30px; padding: 20px; border: 1px solid rgba(0,0,0,0.03); }
         .page-section { display: none; animation: slideUp 0.4s ease-out; }
         .page-section.active { display: block; }
         .btn-action { width: 32px; height: 32px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; border: none; margin: 0 2px; transition: 0.2s; font-size: 0.9rem; }
@@ -53,19 +28,19 @@
         .status-pill { padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
         .status-debe { background: #fff1f2; color: #e11d48; }
         .status-pago { background: #f0fdf4; color: #16a34a; }
-        .cloud-badge { font-size: 0.75rem; background: rgba(14, 165, 233, 0.15); color: #38bdf8; border: 1px solid rgba(14, 165, 233, 0.3); }
+        .cloud-badge { font-size: 0.75rem; background: rgba(14, 165, 233, 0.15); color: #38bdf8; border: 1px solid rgba(14, 165, 233, 0.3); padding: 4px 10px; border-radius: 20px; }
         .dash-card { border-radius: 16px; padding: 20px; color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.05); cursor: pointer; transition: transform 0.2s, filter 0.2s; }
         .dash-card:hover { transform: translateY(-3px); filter: brightness(1.1); }
         .live-badge { animation: pulse 2s infinite; background-color: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; font-size: 0.85rem; }
         .prod-tag { font-size: 0.75rem; padding: 2px 6px; border-radius: 6px; background-color: #f1f5f9; color: #475569; font-weight: 600; display: inline-block; margin-top: 3px; }
-        
         .password-container { position: relative; }
         .password-container .toggle-password-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #64748b; cursor: pointer; z-index: 10; }
-
+        .checkbox-column { width: 40px; text-align: center; }
+        .borrado-masivo-btn { display: none; }
+        .borrado-masivo-btn.visible { display: inline-block; }
         @keyframes pulse { 0% { opacity: 0.8; } 50% { opacity: 1; } 100% { opacity: 0.8; } }
         @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         @media print { .no-print { display: none !important; } }
-
         @media (max-width: 991px) {
             .mobile-toggle { display: block; }
             .sidebar { transform: translateX(-100%); width: 260px; box-shadow: 5px 0 15px rgba(0,0,0,0.2); height: 100vh; }
@@ -74,6 +49,7 @@
             .card-pro { padding: 15px !important; border-radius: 14px; }
             h3 { font-size: 1.4rem; }
             .dash-card { padding: 15px; margin-bottom: 5px; }
+            .checkbox-column { width: 30px; }
         }
     </style>
 </head>
@@ -85,7 +61,7 @@
             <span class="text-muted small fw-bold mb-4">DEL CESAR • ACCESO</span>
             <div class="mb-3 text-start">
                 <label class="small fw-bold text-secondary">NOMBRE DE USUARIO</label>
-                <input type="text" id="loginUserInput" class="form-control border-0 bg-light text-center fw-bold" placeholder="Ej: admin" onkeypress="if(event.key === 'Enter') intentarIngresar()">
+                <input type="text" id="loginUserInput" class="form-control border-0 bg-light text-center fw-bold" placeholder="admin" onkeypress="if(event.key === 'Enter') intentarIngresar()">
             </div>
             <div class="mb-4 text-start">
                 <label class="small fw-bold text-secondary">CONTRASEÑA</label>
@@ -94,7 +70,7 @@
                     <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('loginPass')"><i class="bi bi-eye"></i></button>
                 </div>
             </div>
-            <button id="btnLoginSubmit" class="btn btn-info text-white w-100 py-2 fw-bold" onclick="intentarIngresar()">INGRESAR AL SISTEMA</button>
+            <button class="btn btn-info text-white w-100 py-2 fw-bold" onclick="intentarIngresar()">INGRESAR</button>
         </div>
     </div>
 
@@ -107,60 +83,53 @@
             <h4 class="fw-bold mb-0 text-info">CASCADA</h4>
             <div class="d-flex align-items-center justify-content-between mt-1">
                 <span class="text-white-50 small fw-bold">DEL CESAR</span>
-                <span class="badge cloud-badge" id="userActiveBadge">---</span>
+                <span class="cloud-badge" id="userActiveBadge">---</span>
             </div>
         </div>
         <nav class="flex-grow-1">
-            <div class="nav-group-title op-item hide-partner-nav">Operaciones</div>
-            <a class="nav-link op-item hide-partner-nav" id="lnk-ventas" onclick="navegarHacia('ventas')"><i class="bi bi-cart-fill"></i> Nueva Venta</a>
-            <a class="nav-link prod-item" id="lnk-produccion" onclick="navegarHacia('produccion')"><i class="bi bi-hammer"></i> Producido Real</a>
-            <a class="nav-link inv-item" id="lnk-inventario" onclick="navegarHacia('inventario')"><i class="bi bi-box-seam-fill"></i> Inventario</a>
-            <a class="nav-link cli-item" id="lnk-clientes" onclick="navegarHacia('clientes')"><i class="bi bi-people-fill"></i> Clientes</a>
-            <div class="nav-group-title label-admin admin-only">Administración</div>
-            <a class="nav-link admin-only" id="lnk-dashboard" onclick="navegarHacia('dashboard')"><i class="bi bi-journal-text"></i> Cartera / Ventas</a>
-            <a class="nav-link admin-only only-real-admin" id="lnk-config" onclick="navegarHacia('config')"><i class="bi bi-gear-fill"></i> Empresa / Personal</a>
+            <div class="nav-group-title">Operaciones</div>
+            <a class="nav-link" id="lnk-ventas" onclick="navegarHacia('ventas')"><i class="bi bi-cart-fill"></i> Nueva Venta</a>
+            <a class="nav-link" id="lnk-produccion" onclick="navegarHacia('produccion')"><i class="bi bi-hammer"></i> Producido Real</a>
+            <a class="nav-link" id="lnk-inventario" onclick="navegarHacia('inventario')"><i class="bi bi-box-seam-fill"></i> Inventario</a>
+            <a class="nav-link" id="lnk-clientes" onclick="navegarHacia('clientes')"><i class="bi bi-people-fill"></i> Clientes</a>
+            <div class="nav-group-title">Administración</div>
+            <a class="nav-link" id="lnk-dashboard" onclick="navegarHacia('dashboard')"><i class="bi bi-journal-text"></i> Cartera / Ventas</a>
+            <a class="nav-link" id="lnk-config" onclick="navegarHacia('config')"><i class="bi bi-gear-fill"></i> Empresa / Personal</a>
             <div class="nav-group-title">Mi Cuenta</div>
-            <a class="nav-link" id="lnk-perfil" onclick="navegarHacia('perfil')"><i class="bi bi-shield-lock"></i> Cambiar mi Clave</a>
+            <a class="nav-link" id="lnk-perfil" onclick="navegarHacia('perfil')"><i class="bi bi-shield-lock"></i> Cambiar Clave</a>
         </nav>
-        
         <div class="p-4 gap-2 d-flex flex-column border-top border-secondary border-opacity-25 bg-dark bg-opacity-20 mt-auto">
-            <button id="btnExportExcelSidebar" class="btn btn-outline-info btn-sm w-100 py-2 admin-only" onclick="exportarExcel()"><i class="bi bi-download me-2"></i>Exportar Excel</button>
+            <button class="btn btn-outline-info btn-sm w-100 py-2" onclick="exportarExcel()"><i class="bi bi-download me-2"></i>Exportar Excel</button>
             <button class="btn btn-danger btn-sm w-100 py-2 fw-bold shadow-sm" onclick="cerrarSesion()"><i class="bi bi-box-arrow-left me-2"></i>Cerrar Sesión</button>
         </div>
     </div>
 
     <div class="main-content">
+        
         <section id="ventas" class="page-section">
             <h3 class="fw-bold mb-4">Nueva Factura</h3>
             <div class="row g-4">
                 <div class="col-lg-8">
-                    <div class="card-pro p-4">
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-6 col-lg-4">
-                                <label class="small fw-bold text-primary"><i class="bi bi-calendar-event-fill"></i> FECHA DE REGISTRO</label>
-                                <input type="date" id="vFechaManual" class="form-control border-primary bg-light fw-bold">
-                            </div>
-                        </div>
-                        <hr class="text-muted opacity-25">
+                    <div class="card-pro">
+                        <div class="mb-3"><label class="small fw-bold text-primary">FECHA</label><input type="date" id="vFechaManual" class="form-control border-primary"></div>
+                        <hr>
                         <div class="row g-3 mb-4">
-                            <div class="col-md-12"><label class="small fw-bold">CLIENTE</label><input list="dataCli" id="vCliente" class="form-control bg-light border-0" placeholder="Nombre..."><datalist id="dataCli"></datalist></div>
-                            <div class="col-md-5"><label class="small fw-bold">PRODUCTO</label><select id="vProd" class="form-select bg-light border-0" onchange="sugerirPrecio()"></select></div>
-                            <div class="col-md-2"><label class="small fw-bold">CANT.</label><input type="number" id="vCant" class="form-control bg-light border-0" value="1"></div>
-                            <div class="col-md-3"><label class="small fw-bold">PRECIO UNIDAD</label><input type="number" id="vPrec" class="form-control bg-light border-0"></div>
-                            <div class="col-md-2 d-flex align-items-end"><button class="btn btn-primary w-100 py-2" id="btnAddCarrito" onclick="addCarrito()"><i class="bi bi-plus-lg"></i></button></div>
+                            <div class="col-md-12"><label class="small fw-bold">CLIENTE</label><input list="dataCli" id="vCliente" class="form-control bg-light" placeholder="Nombre..."><datalist id="dataCli"></datalist></div>
+                            <div class="col-md-5"><label class="small fw-bold">PRODUCTO</label><select id="vProd" class="form-select bg-light" onchange="sugerirPrecio()"></select></div>
+                            <div class="col-md-2"><label class="small fw-bold">CANT.</label><input type="number" id="vCant" class="form-control bg-light" value="1"></div>
+                            <div class="col-md-3"><label class="small fw-bold">PRECIO</label><input type="number" id="vPrec" class="form-control bg-light"></div>
+                            <div class="col-md-2 d-flex align-items-end"><button class="btn btn-primary w-100 py-2" onclick="addCarrito()"><i class="bi bi-plus-lg"></i></button></div>
                         </div>
-                        <div class="table-responsive">
-                            <table class="table align-middle"><thead><tr><th>Detalle</th><th>Cant.</th><th>Subtotal</th><th></th></tr></thead><tbody id="cartBody"></tbody></table>
-                        </div>
+                        <div class="table-responsive"><table class="table align-middle"><thead><tr><th>Detalle</th><th>Cant.</th><th>Subtotal</th><th></th></tr></thead><tbody id="cartBody"></tbody></table></div>
                     </div>
                 </div>
                 <div class="col-lg-4">
-                    <div class="card-pro p-4 bg-primary text-white shadow-lg border-0">
+                    <div class="card-pro bg-primary text-white">
                         <p class="small fw-bold opacity-75 mb-1">VALOR TOTAL</p>
                         <h1 class="display-5 fw-bold mb-4" id="totalDisp">$0</h1>
-                        <label class="small fw-bold opacity-75 mb-2">ABONO EN EFECTIVO ($)</label>
-                        <input type="text" id="vAbono" class="form-control form-control-lg border-0 mb-4 shadow-sm" style="background: rgba(255,255,255,0.2); color: white;" oninput="formatearEntradaAbono(this)">
-                        <button class="btn btn-light btn-lg w-100 fw-bold py-3 text-primary shadow" id="btnProcesarVenta" onclick="procesarFactura()">PROCESAR VENTA</button>
+                        <label class="small fw-bold opacity-75 mb-2">ABONO ($)</label>
+                        <input type="text" id="vAbono" class="form-control form-control-lg border-0 mb-4" style="background: rgba(255,255,255,0.2); color: white;" oninput="formatearEntradaAbono(this)">
+                        <button class="btn btn-light btn-lg w-100 fw-bold py-3 text-primary shadow" onclick="procesarFactura()">PROCESAR VENTA</button>
                     </div>
                 </div>
             </div>
@@ -169,61 +138,54 @@
         <section id="produccion" class="page-section">
             <h3 class="fw-bold mb-4">Arqueo de Producción</h3>
             <div class="row g-4">
-                <div class="col-lg-4 hide-partner-block">
-                    <div class="card-pro p-4 border-top border-info border-4 shadow-sm" id="panelFormArqueo">
+                <div class="col-lg-4">
+                    <div class="card-pro border-top border-info border-4">
                         <input type="hidden" id="prodIdx" value="-1">
                         <div class="mb-3">
-                            <label class="small fw-bold text-primary text-uppercase"><i class="bi bi-calendar-check-fill"></i>  Fecha del Arqueo</label>
-                            <input type="date" id="prodFechaManual" class="form-control border-primary fw-bold bg-light" onchange="actualizarCalculosProduccion()">
+                            <label class="small fw-bold text-primary">FECHA DEL ARQUEO</label>
+                            <input type="date" id="prodFechaManual" class="form-control border-primary fw-bold bg-light">
                         </div>
-                        <hr class="text-muted opacity-25">
-
-                        <div class="p-2 bg-light rounded-3 mb-3 border">
-                            <span class="small fw-bold text-dark d-block mb-2"><i class="bi bi-box-seam-fill text-info"></i> CONTEO FÍSICO ACTUAL DEL TURNO:</span>
-                            <div class="row g-2 mb-2 border-bottom pb-2">
-                                <div class="col-6"><label class="small fw-bold text-muted">AGUA INICIAL</label><input type="number" id="prodIniAgua" class="form-control form-control-sm" value="0" oninput="calcularProdReal()"></div>
-                                <div class="col-6"><label class="small fw-bold text-muted">AGUA FINAL</label><input type="number" id="prodFinAgua" class="form-control form-control-sm" value="0" oninput="calcularProdReal()"></div>
+                        <hr>
+                        <div class="p-2 bg-light rounded-3 mb-3">
+                            <span class="small fw-bold d-block mb-2">CONTEO FÍSICO:</span>
+                            <div class="row g-2 mb-2">
+                                <div class="col-6"><label class="small text-muted">AGUA INICIAL</label><input type="number" id="prodIniAgua" class="form-control form-control-sm" value="0"></div>
+                                <div class="col-6"><label class="small text-muted">AGUA FINAL</label><input type="number" id="prodFinAgua" class="form-control form-control-sm" value="0"></div>
                             </div>
-                            <div class="row g-2 mb-2 border-bottom pb-2">
-                                <div class="col-6"><label class="small fw-bold text-muted">HIELO INICIAL</label><input type="number" id="prodIniHielo" class="form-control form-control-sm" value="0" oninput="calcularProdReal()"></div>
-                                <div class="col-6"><label class="small fw-bold text-muted">HIELO FINAL</label><input type="number" id="prodFinHielo" class="form-control form-control-sm" value="0" oninput="calcularProdReal()"></div>
+                            <div class="row g-2 mb-2">
+                                <div class="col-6"><label class="small text-muted">HIELO INICIAL</label><input type="number" id="prodIniHielo" class="form-control form-control-sm" value="0"></div>
+                                <div class="col-6"><label class="small text-muted">HIELO FINAL</label><input type="number" id="prodFinHielo" class="form-control form-control-sm" value="0"></div>
                             </div>
                             <div class="row g-2">
-                                <div class="col-6"><label class="small fw-bold text-muted">BOT. INICIAL</label><input type="number" id="prodIniBot" class="form-control form-control-sm" value="0" oninput="calcularProdReal()"></div>
-                                <div class="col-6"><label class="small fw-bold text-muted">BOT. FINAL</label><input type="number" id="prodFinBot" class="form-control form-control-sm" value="0" oninput="calcularProdReal()"></div>
+                                <div class="col-6"><label class="small text-muted">BOT. INICIAL</label><input type="number" id="prodIniBot" class="form-control form-control-sm" value="0"></div>
+                                <div class="col-6"><label class="small text-muted">BOT. FINAL</label><input type="number" id="prodFinBot" class="form-control form-control-sm" value="0"></div>
                             </div>
                         </div>
-
-                        <div class="mb-2 row g-2" style="display: none;">
-                            <div class="col-4"><input type="number" id="prodIni" readonly></div>
-                            <div class="col-4"><input type="number" id="prodFin" readonly></div>
-                        </div>
                         <div class="mb-3">
-                            <label class="small fw-bold text-muted text-uppercase">Unidades Vendidas Registradas (Auto)</label>
-                            <input type="number" id="prodVentas" class="form-control bg-light form-control-lg fw-bold" readonly>
+                            <label class="small fw-bold text-muted">VENTAS DEL DÍA</label>
+                            <input type="number" id="prodVentas" class="form-control bg-light form-control-lg fw-bold" readonly value="0">
                         </div>
-                        
-                        <div class="bg-primary text-white p-3 rounded-4 text-center mb-4 shadow-sm">
-                            <small class="fw-bold opacity-75">PRODUCIDO TOTAL CALCULADO</small>
+                        <div class="bg-primary text-white p-3 rounded-4 text-center mb-4">
+                            <small class="fw-bold opacity-75">PRODUCIDO TOTAL</small>
                             <h2 class="fw-bold m-0 display-6" id="prodRes">0</h2>
                         </div>
-                        <button id="btnGuardarArqueo" class="btn btn-info w-100 py-3 fw-bold text-white shadow-sm rounded-3" onclick="guardarArqueoSinClave()">GUARDAR Y REINICIAR CONTEO</button>
+                        <button class="btn btn-info w-100 py-3 fw-bold text-white shadow-sm rounded-3" onclick="guardarArqueo()">GUARDAR ARQUEO</button>
                     </div>
                 </div>
-                <div class="col-lg-8" id="contenedorHistorialArqueo">
-                    <div class="card-pro p-4 shadow-sm">
-                        <h6 class="fw-bold mb-3">Historial de Arqueos Realizados</h6>
+                <div class="col-lg-8">
+                    <div class="card-pro">
+                        <h6 class="fw-bold mb-3">Historial de Arqueos</h6>
                         <div class="table-responsive">
                             <table class="table align-middle" style="font-size: 0.9rem;">
                                 <thead>
                                     <tr>
                                         <th>Fecha/Hora</th>
                                         <th>Responsable</th>
-                                        <th>Inicial Total</th>
-                                        <th>Ventas Total</th>
-                                        <th>Final Total</th>
-                                        <th>PRODUCIDO POR PRODUCTO EXACTO</th>
-                                        <th class="text-end action-header-arqueo">Acciones</th>
+                                        <th>Inicial</th>
+                                        <th>Ventas</th>
+                                        <th>Final</th>
+                                        <th>Producido</th>
+                                        <th class="text-end">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody id="prodHistBody"></tbody>
@@ -237,7 +199,7 @@
         <section id="dashboard" class="page-section">
             <h3 class="fw-bold mb-2">Cartera y Ventas</h3>
             
-            <div class="card-pro p-3 mb-4 live-badge shadow-sm hide-vendedor-live">
+            <div class="card-pro p-3 mb-4 live-badge shadow-sm">
                 <div class="row align-items-center">
                     <div class="col-md-8">
                         <span class="fw-bold text-uppercase d-block mb-1"><i class="bi bi-lightning-charge-fill text-warning me-1"></i> Despacho en Vivo (Hoy):</span>
@@ -253,58 +215,34 @@
                     </div>
                 </div>
             </div>
-            
-            <div class="row g-3 mb-4 hide-vendedor-cards hide-partner-money-cards">
-                <div class="col-md-4"><div class="dash-card bg-primary" onclick="filtrarPorIndicador('hoy')"><small class="fw-bold opacity-75">VENDIDO HOY</small><h3 class="fw-bold m-0" id="dashVendido">$0</h3></div></div>
-                <div class="col-md-4"><div class="dash-card bg-success" onclick="filtrarPorIndicador('pagado')"><small class="fw-bold opacity-75">RECAUDADO HOY</small><h3 class="fw-bold m-0" id="dashRecaudado">$0</h3></div></div>
-                <div class="col-md-4"><div class="dash-card bg-danger" onclick="filtrarPorIndicador('debe')"><small class="fw-bold opacity-75">EN CARTERA (DEUDA HOY)</small><h3 class="fw-bold m-0" id="dashCartera">$0</h3></div></div>
+
+            <div class="row g-3 mb-4">
+                <div class="col-md-4"><div class="dash-card bg-primary"><small class="fw-bold opacity-75">VENDIDO HOY</small><h3 class="fw-bold m-0" id="dashVendido">$0</h3></div></div>
+                <div class="col-md-4"><div class="dash-card bg-success"><small class="fw-bold opacity-75">RECAUDADO HOY</small><h3 class="fw-bold m-0" id="dashRecaudado">$0</h3></div></div>
+                <div class="col-md-4"><div class="dash-card bg-danger"><small class="fw-bold opacity-75">DEUDA HOY</small><h3 class="fw-bold m-0" id="dashCartera">$0</h3></div></div>
             </div>
 
-            <div class="card-pro p-4 mb-4 border border-info border-opacity-25 bg-white">
-                <h6 class="fw-bold text-muted mb-3 text-uppercase small"><i class="bi bi-funnel-fill text-info"></i> Filtro simultáneo de Ventas e Inventario Histórico</h6>
-                <div class="row g-3 align-items-center">
-                    <div class="col-md-4">
-                        <label class="small fw-bold mb-1 text-secondary">1. BUSCAR CLIENTE</label>
-                        <input type="text" id="filtroCliente" class="form-control" placeholder="Escribe el nombre" onkeyup="aplicarFiltrosSimultaneos()">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="small fw-bold mb-1 text-secondary">2. SELECCIONAR FECHA</label>
-                        <input type="date" id="filtroFecha" class="form-control" onchange="aplicarFiltrosSimultaneos()">
-                    </div>
-                    <div class="col-md-4 d-flex align-items-end gap-2" style="height: 100%;">
-                        <button type="button" class="btn btn-outline-secondary w-100 py-2 btn-sm" onclick="limpiarFiltrosAvanzados()"><i class="bi bi-arrow-clockwise"></i> Resetear Filtros</button>
-                    </div>
-                </div>
-                
-                <div class="mt-3 p-3 bg-light rounded-3 border">
-                    <span class="small fw-bold text-uppercase d-block text-muted mb-2"><i class="bi bi-calculator me-1"></i> Unidades vendidas en el filtro seleccionado:</span>
-                    <div class="d-flex flex-wrap gap-4 font-monospace">
-                        <div><i class="bi bi-droplet-fill text-primary"></i> AGUA: <strong class="text-dark border-bottom border-2 border-primary" id="historiaAgua">0</strong> pacas</div>
-                        <div><i class="bi bi-snow2 text-info"></i> HIELO: <strong class="text-dark border-bottom border-2 border-info" id="historiaHielo">0</strong> pacas</div>
-                        <div><i class="bi bi-barrel-fill text-secondary"></i> BOTELLÓN: <strong class="text-dark border-bottom border-2 border-secondary" id="historiaBotellon">0</strong> unds</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card-pro p-4">
-                <div class="d-flex justify-content-between align-items-center mb-3 bg-light p-3 rounded-3 border border-opacity-50 admin-only text-acciones-masivas">
-                    <span class="small fw-bold text-secondary"><i class="bi bi-check2-square text-primary"></i> Controles de selección múltiple</span>
-                    <button id="btnBorradoMasivo" class="btn btn-danger btn-sm fw-bold px-3 d-none" onclick="solicitarSeguridadMasiva()"><i class="bi bi-trash3-fill me-1"></i> Eliminar Seleccionadas</button>
+            <div class="card-pro">
+                <div class="d-flex justify-content-between align-items-center mb-3 bg-light p-3 rounded-3 border">
+                    <span class="small fw-bold text-secondary">
+                        <i class="bi bi-check2-square text-primary"></i> Selecciona las ventas que deseas eliminar
+                    </span>
+                    <button id="btnBorradoMasivo" class="btn btn-danger btn-sm fw-bold px-3 borrado-masivo-btn" onclick="eliminarVentasMasivas()">
+                        <i class="bi bi-trash3-fill me-1"></i> Eliminar Seleccionadas (<span id="contadorSeleccionadas">0</span>)
+                    </button>
                 </div>
 
                 <div class="table-responsive">
                     <table class="table table-hover align-middle">
                         <thead>
                             <tr>
-                                <th style="width: 40px;" class="admin-only th-checkbox-master"><input type="checkbox" id="checkTodo" class="form-check-input" onchange="seleccionarTodasLasVentasVisibles(this)"></th>
-                                <th>No.</th>
+                                <th class="checkbox-column"><input type="checkbox" id="checkTodos" onchange="seleccionarTodasVentas(this)"></th>
+                                <th>Factura</th>
                                 <th>Fecha/Hora</th>
-                                <th>Cliente / Detalle Carga</th>
-                                <th>Despachador / Editor</th>
-                                <th class="hide-vendedor-table-cell hide-partner-money-cells">Total</th>
-                                <th class="hide-vendedor-table-cell hide-partner-money-cells">Abono</th>
-                                <th class="hide-vendedor-table-cell hide-partner-money-cells">Deuda</th>
-                                <th class="hide-vendedor-table-cell hide-partner-money-cells">Estado</th>
+                                <th>Cliente</th>
+                                <th>Detalle</th>
+                                <th>Total</th>
+                                <th>Estado</th>
                                 <th class="text-center">Acciones</th>
                             </tr>
                         </thead>
@@ -315,46 +253,30 @@
         </section>
 
         <section id="inventario" class="page-section">
-            <div class="d-flex justify-content-between mb-4">
-                <h3 class="fw-bold">Inventario</h3>
-                <button class="btn btn-dark admin-only no-partner-btn" onclick="abrirModProd()">+ Nuevo Producto</button>
-            </div>
-            <div class="card-pro overflow-hidden shadow-sm">
+            <div class="d-flex justify-content-between mb-4"><h3 class="fw-bold">Inventario</h3><button class="btn btn-dark" onclick="abrirModProd()">+ Nuevo</button></div>
+            <div class="card-pro">
                 <div class="table-responsive">
                     <table class="table align-middle mb-0">
-                        <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th class="hide-partner-money-cells">Precio</th>
-                                <th style="width: 140px;">Stock Real</th>
-                                <th style="width: 260px;" class="admin-only section-add-stock-header">¿Cuánto deseas agregar?</th>
-                                <th class="text-end px-4 admin-only action-header-inv">Acciones</th>
-                            </tr>
-                        </thead>
+                        <thead><tr><th>Nombre</th><th>Precio</th><th>Stock</th><th class="text-end">Acciones</th></tr></thead>
                         <tbody id="invBody"></tbody>
                     </table>
                 </div>
             </div>
         </section>
 
-        <section id="clientes" class="page-section"><div class="d-flex justify-content-between mb-4"><h3 class="fw-bold">Clientes</h3><button class="btn btn-dark no-partner-btn" id="btnNuevoCliente" onclick="abrirModCli()">+ Nuevo Cliente</button></div><div class="card-pro overflow-hidden"><div class="table-responsive"><table class="table align-middle mb-0"><thead><tr><th>Nombre</th><th>ID / Cédula</th><th>Teléfono</th><th>Ciudad</th><th class="text-end px-4 admin-only action-header-cli">Acciones</th></tr></thead><tbody id="cliBody"></tbody></table></div></div></section>
-        
-        <section id="perfil" class="page-section">
-            <h3 class="fw-bold mb-4">Mi Perfil de Usuario</h3>
-            <div class="card-pro p-4" style="max-width: 450px; border-top: 4px solid var(--primario);">
-                <h6 class="fw-bold text-dark mb-3"><i class="bi bi-key-fill text-info"></i> Actualizar mi Contraseña</h6>
-                <p class="small text-muted mb-4">Por seguridad, tras ingresar con tu clave provisional o asignada, escribe aquí tu nueva clave personal.</p>
-                <div class="mb-4">
-                    <label class="small fw-bold text-secondary mb-1">Nueva Contraseña Personal</label>
-                    <div class="password-container">
-                        <input type="password" id="myNewPassInput" class="form-control font-monospace" placeholder="Escribe tu nueva clave">
-                        <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('myNewPassInput')"><i class="bi bi-eye"></i></button>
-                    </div>
+        <section id="clientes" class="page-section">
+            <div class="d-flex justify-content-between mb-4"><h3 class="fw-bold">Clientes</h3><button class="btn btn-dark" onclick="abrirModCli()">+ Nuevo</button></div>
+            <div class="card-pro">
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead><tr><th>Nombre</th><th>ID</th><th>Teléfono</th><th>Ciudad</th><th class="text-end">Acciones</th></tr></thead>
+                        <tbody id="cliBody"></tbody>
+                    </table>
                 </div>
-                <button class="btn btn-primary w-100 py-2 fw-bold" onclick="actualizarMiContrasenaAutonomo()">GUARDAR NUEVA CONTRASEÑA</button>
             </div>
         </section>
 
+        <!-- SECCIÓN CONFIGURACIÓN -->
         <section id="config" class="page-section">
             <h3 class="fw-bold mb-4">Administración General</h3>
             <ul class="nav nav-tabs mb-3" id="configTabs" role="tablist">
@@ -363,7 +285,7 @@
             </ul>
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="tabEmpresa">
-                    <div class="card-pro p-4 mt-2" style="max-width: 500px;">
+                    <div class="card-pro mt-2" style="max-width: 500px;">
                         <div class="mb-3"><label class="small fw-bold">RAZÓN SOCIAL</label><input type="text" id="cfgNom" class="form-control"></div>
                         <div class="mb-3"><label class="small fw-bold">NIT</label><input type="text" id="cfgNit" class="form-control"></div>
                         <div class="mb-3"><label class="small fw-bold">DIRECCIÓN</label><input type="text" id="cfgDir" class="form-control"></div>
@@ -374,7 +296,7 @@
                 <div class="tab-pane fade" id="tabUsuarios">
                     <div class="row g-4 mt-1">
                         <div class="col-md-5">
-                            <div class="card-pro p-4 border border-danger border-opacity-25">
+                            <div class="card-pro border border-danger border-opacity-25">
                                 <h6 id="tituloFormUsuario" class="fw-bold text-danger mb-3">Crear / Editar Usuario</h6>
                                 <input type="hidden" id="uUserIndexMod" value="-1">
                                 <div class="mb-2"><label class="small fw-bold">Nombre de Usuario (Login)</label><input type="text" id="uUserNom" class="form-control form-control-sm" placeholder="Ej: pedro.vargas"></div>
@@ -392,7 +314,7 @@
                             </div>
                         </div>
                         <div class="col-md-7">
-                            <div class="card-pro p-4">
+                            <div class="card-pro">
                                 <h6 class="fw-bold mb-3">Personal Autorizado</h6>
                                 <div class="table-responsive">
                                     <table class="table table-sm align-middle small">
@@ -406,18 +328,55 @@
                 </div>
             </div>
         </section>
+
+        <section id="perfil" class="page-section">
+            <h3 class="fw-bold mb-4">Mi Perfil</h3>
+            <div class="card-pro" style="max-width: 450px;">
+                <h6 class="fw-bold mb-3"><i class="bi bi-key-fill text-info"></i> Cambiar Contraseña</h6>
+                <div class="mb-4">
+                    <label class="small fw-bold text-secondary mb-1">Nueva Contraseña</label>
+                    <div class="password-container">
+                        <input type="password" id="myNewPassInput" class="form-control font-monospace" placeholder="Nueva clave">
+                        <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('myNewPassInput')"><i class="bi bi-eye"></i></button>
+                    </div>
+                </div>
+                <button class="btn btn-primary w-100 py-2 fw-bold" onclick="actualizarContrasena()">GUARDAR</button>
+            </div>
+        </section>
     </div>
 
-    <div class="modal fade" id="modSec" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-sm modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header bg-danger text-white border-0"><h6 class="m-0">Security</h6></div><div class="modal-body text-center"><input type="hidden" id="secAction"><input type="hidden" id="secIdx"><p id="secMsg" class="small fw-bold text-muted mb-3"></p><div class="password-container mb-3"><input type="password" id="secPass" class="form-control text-center" placeholder="CLAVE SUPERADMIN"><button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('secPass')"><i class="bi bi-eye"></i></button></div><button type="button" class="btn btn-danger w-100 fw-bold" onclick="ejecutarAccionSecure()">CONFIRMAR</button></div></div></div></div>
-    <div class="modal fade" id="modProd" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-body p-4"><input type="hidden" id="pIdx"><h6>Ficha Producto</h6><input type="text" id="pNom" class="form-control mb-2" placeholder="Nombre"><input type="number" id="pPre" class="form-control mb-2" placeholder="Precio"><input type="number" id="pSto" class="form-control mb-3" placeholder="Stock Inicial"><button type="button" class="btn btn-primary w-100" onclick="saveProd()">Guardar</button></div></div></div></div>
-    <div class="modal fade" id="modCli" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-body p-4"><input type="hidden" id="cIdx"><h6>Ficha Cliente</h6><input type="text" id="cNom" class="form-control mb-2" placeholder="NOMBRE"><input type="text" id="cIden" class="form-control mb-2" placeholder="CEDULA / ID"><input type="text" id="cTel" class="form-control mb-2" placeholder="TELEFONO"><input type="text" id="cDir" class="form-control mb-2" placeholder="DIRECCION"><input type="text" id="cCity" class="form-control mb-3" placeholder="CIUDAD"><button type="button" class="btn btn-primary w-100" onclick="saveCli()">Guardar Cliente</button></div></div></div></div>
-    <div class="modal fade" id="modDetalleVenta" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0 shadow-lg"><div class="modal-header bg-dark text-white"><h6 class="m-0" id="detTitle">Detalle de Factura</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body"><div class="table-responsive"><table class="table table-sm align-middle"><thead><tr><th>Producto</th><th>Cant.</th><th class="hide-vendedor-table-cell hide-partner-money-cells">Precio</th><th class="hide-vendedor-table-cell hide-partner-money-cells">Subtotal</th></tr></thead><tbody id="detBody"></tbody></table></div><div class="text-end fw-bold border-top pt-2 hide-vendedor-table-cell hide-partner-money-cells" id="detTotal"></div></div></div></div>
+    <!-- MODALES -->
+    <div class="modal fade" id="modDetalleVenta" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-dark text-white">
+                    <h6 class="m-0" id="detTitle">Detalle de Factura</h6>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm align-middle">
+                            <thead><tr><th>Producto</th><th>Cant.</th><th>Precio</th><th>Subtotal</th></tr></thead>
+                            <tbody id="detBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="text-end fw-bold border-top pt-2" id="detTotal"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modProd" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-body p-4"><input type="hidden" id="pIdx"><h6>Producto</h6><input type="text" id="pNom" class="form-control mb-2" placeholder="Nombre"><input type="number" id="pPre" class="form-control mb-2" placeholder="Precio"><input type="number" id="pSto" class="form-control mb-3" placeholder="Stock"><button class="btn btn-primary w-100" onclick="saveProd()">Guardar</button></div></div></div></div>
+    <div class="modal fade" id="modCli" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-body p-4"><input type="hidden" id="cIdx"><h6>Cliente</h6><input type="text" id="cNom" class="form-control mb-2" placeholder="Nombre"><input type="text" id="cIden" class="form-control mb-2" placeholder="Cédula"><input type="text" id="cTel" class="form-control mb-2" placeholder="Teléfono"><input type="text" id="cCity" class="form-control mb-3" placeholder="Ciudad"><button class="btn btn-primary w-100" onclick="saveCli()">Guardar</button></div></div></div></div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <script>
+        // ============================================================
+        // CONFIGURACIÓN FIREBASE
+        // ============================================================
         const firebaseConfig = {
             apiKey: "AIzaSyBT3WMoq9ZfwQIAHCla4bZuc8XM1TcWy0",
             authDomain: "cascada-del-cesar.firebaseapp.com",
@@ -427,264 +386,253 @@
             messagingSenderId: "431088400074",
             appId: "1:431088400074:web:a92dc1136c1b09e43d2633"
         };
-        
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
+        // ============================================================
+        // VARIABLES GLOBALES
+        // ============================================================
         const CLAVE_ADMIN = "Cascada*123";
-        let inventario = [];
-        let clientes = [];
-        let ventas = [];
-        let produccion = [];
-        let usuarios = []; 
-        let usuarioSesionActiva = null; 
-
+        let inventario = [], clientes = [], ventas = [], produccion = [], usuarios = [];
         let config = { nombre: "CASCADA DEL CESAR", nit: "", dir: "", tel: "" };
-        let numFactura = 1;
+        let usuarioSesionActiva = null;
         let carrito = [];
-
+        let numFactura = 1;
+        let mProd, mCli, mDet;
         let editVentaOriginalMetadata = null;
-        let mSec, mProd, mCli, mDet;
-        
+        let ventasSeleccionadas = [];
+        let sesionActiva = false;
+
+        // ============================================================
+        // INICIALIZACIÓN
+        // ============================================================
         document.addEventListener("DOMContentLoaded", function() {
-            mSec = new bootstrap.Modal(document.getElementById('modSec'));
             mProd = new bootstrap.Modal(document.getElementById('modProd'));
             mCli = new bootstrap.Modal(document.getElementById('modCli'));
             mDet = new bootstrap.Modal(document.getElementById('modDetalleVenta'));
-            establecerFechaDeHoy(); 
             
-            // VERIFICACIÓN AUTOMÁTICA Y CIERRE TRAS 1 HORA DE INACTIVIDAD
-            verificarExpiracionSesion();
+            verificarSesion();
+            
+            // Listeners de Firebase
+            db.ref('inventario').on('value', s => { inventario = s.val() || []; if (sesionActiva || usuarioSesionActiva) renderTodo(); });
+            db.ref('clientes').on('value', s => { clientes = s.val() || []; if (sesionActiva || usuarioSesionActiva) renderTodo(); });
+            db.ref('ventas').on('value', s => { ventas = s.val() || []; if (sesionActiva || usuarioSesionActiva) { renderTodo(); actualizarVentasProduccion(); calcularTotalesDia(); } });
+            db.ref('produccion').on('value', s => { produccion = s.val() || []; if (sesionActiva || usuarioSesionActiva) renderTodo(); });
+            db.ref('config').on('value', s => { if(s.val()) config = s.val(); if (sesionActiva || usuarioSesionActiva) renderTodo(); });
+            db.ref('numFactura').on('value', s => { numFactura = s.val() || 1; });
+            db.ref('usuarios').on('value', s => { 
+                usuarios = s.val() || []; 
+                if(usuarios.length === 0) {
+                    usuarios = [{ nombre: "admin", rol: "admin", clave: "Cascada*123" }];
+                    db.ref('usuarios').set(usuarios);
+                }
+                renderUsuariosTabla();
+                if (sesionActiva || usuarioSesionActiva) renderTodo();
+            });
+            
+            // Eventos de producción
+            function recargarProduccion() {
+                if (document.getElementById('prodIdx').value === "-1" && (sesionActiva || usuarioSesionActiva)) {
+                    actualizarVentasProduccion();
+                }
+            }
+            
+            document.getElementById('prodFechaManual').addEventListener('change', recargarProduccion);
+            document.getElementById('prodIniAgua').addEventListener('input', recargarProduccion);
+            document.getElementById('prodFinAgua').addEventListener('input', recargarProduccion);
+            document.getElementById('prodIniHielo').addEventListener('input', recargarProduccion);
+            document.getElementById('prodFinHielo').addEventListener('input', recargarProduccion);
+            document.getElementById('prodIniBot').addEventListener('input', recargarProduccion);
+            document.getElementById('prodFinBot').addEventListener('input', recargarProduccion);
         });
 
-        function verificarExpiracionSesion() {
+        // ============================================================
+        // SESIÓN
+        // ============================================================
+        function verificarSesion() {
             const sesionGuardada = localStorage.getItem('cascada_user_session');
             if (sesionGuardada) {
                 try {
-                    const parsedData = JSON.parse(sesionGuardada);
-                    const horaActual = Date.now();
-                    const unaHoraEnMilisegundos = 3600000; // 1 Hora exacta
-                    
-                    if (parsedData.loginTimestamp && (horaActual - parsedData.loginTimestamp > unaHoraEnMilisegundos)) {
-                        alert("Tu sesión ha expirado tras 1 hora de actividad para permitir nuevos accesos. Por favor ingresa de nuevo.");
-                        cerrarSesion();
+                    const data = JSON.parse(sesionGuardada);
+                    const tiempoExpiracion = 86400000; // 24 horas
+                    if (Date.now() - data.loginTimestamp < tiempoExpiracion) {
+                        sesionActiva = true;
+                        aplicarPerfil(data.user);
+                        return;
                     } else {
-                        aplicarPerfilDeUsuario(parsedData.user, parsedData.loginTimestamp);
+                        localStorage.removeItem('cascada_user_session');
                     }
                 } catch(e) {
                     localStorage.removeItem('cascada_user_session');
                 }
             }
+            document.getElementById('loginScreen').style.display = 'flex';
         }
 
-        function togglePasswordVisibility(inputId) {
-            const el = document.getElementById(inputId);
+        function intentarIngresar() {
+            const user = document.getElementById('loginUserInput').value.trim().toLowerCase();
+            const pass = document.getElementById('loginPass').value;
+            if(!user || !pass) return alert("Complete todos los datos");
+            let u = usuarios.find(usr => usr.nombre.toLowerCase() === user);
+            if (!u && user === 'admin' && pass === 'Cascada*123') u = { nombre: "admin", rol: "admin", clave: "Cascada*123" };
+            if(u && u.clave === pass) {
+                const datosSesion = { user: u, loginTimestamp: Date.now() };
+                localStorage.setItem('cascada_user_session', JSON.stringify(datosSesion));
+                document.getElementById('loginPass').value = '';
+                document.getElementById('loginUserInput').value = '';
+                sesionActiva = true;
+                aplicarPerfil(u);
+            } else {
+                alert("Usuario o contraseña incorrectos");
+            }
+        }
+
+        function aplicarPerfil(u) {
+            usuarioSesionActiva = u;
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('userActiveBadge').innerHTML = '<i class="bi bi-person-fill me-1"></i>' + u.nombre.toUpperCase();
+            
+            // Aplicar permisos según rol
+            const esAdmin = u.rol === 'admin';
+            const esVendedor = u.rol === 'vendedor';
+            const esPartner = u.rol === 'partner';
+            
+            // Mostrar/ocultar elementos según rol
+            document.querySelectorAll('.admin-only').forEach(el => {
+                el.style.display = esAdmin ? '' : 'none';
+            });
+            
+            // Mostrar/ocultar pestaña config solo para admin
+            const configLink = document.getElementById('lnk-config');
+            if (configLink) {
+                configLink.style.display = esAdmin ? '' : 'none';
+            }
+            
+            setTimeout(() => {
+                showSection('dashboard');
+                renderTodo();
+                actualizarVentasProduccion();
+                calcularTotalesDia();
+            }, 300);
+        }
+
+        function cerrarSesion() {
+            usuarioSesionActiva = null;
+            sesionActiva = false;
+            localStorage.removeItem('cascada_user_session');
+            document.getElementById('loginScreen').style.display = 'flex';
+        }
+
+        function togglePasswordVisibility(id) {
+            const el = document.getElementById(id);
             if (!el) return;
             const btn = el.nextElementSibling;
             if(el.type === "password") {
                 el.type = "text";
-                if(btn && btn.querySelector('i')) {
-                    btn.querySelector('i').classList.replace('bi-eye', 'bi-eye-slash');
-                }
+                if(btn && btn.querySelector('i')) btn.querySelector('i').classList.replace('bi-eye', 'bi-eye-slash');
             } else {
                 el.type = "password";
-                if(btn && btn.querySelector('i')) {
-                    btn.querySelector('i').classList.replace('bi-eye-slash', 'bi-eye');
-                }
+                if(btn && btn.querySelector('i')) btn.querySelector('i').classList.replace('bi-eye-slash', 'bi-eye');
             }
-        }
-
-        function establecerFechaDeHoy() {
-            const hoy = new Date();
-            const año = hoy.getFullYear();
-            const mes = String(hoy.getMonth() + 1).padStart(2, '0');
-            const dia = String(hoy.getDate()).padStart(2, '0');
-            const strFecha = `${año}-${mes}-${dia}`;
-            
-            if(document.getElementById('vFechaManual')) document.getElementById('vFechaManual').value = strFecha;
-            if(document.getElementById('prodFechaManual')) document.getElementById('prodFechaManual').value = strFecha;
-        }
-
-        function obtenerFechaFormateadaDesdeInput(idInput) {
-            const rawValue = document.getElementById(idInput).value;
-            if(!rawValue) return new Date().toLocaleDateString();
-            const partes = rawValue.split('-');
-            return `${parseInt(partes[2])}/${parseInt(partes[1])}/${partes[0]}`;
         }
 
         function toggleMenu() {
             document.getElementById('sidebarMenu').classList.toggle('open');
         }
 
-        function navegarHacia(seccionId) {
-            verificarExpiracionSesion(); // Valida tiempo antes de saltar de pantalla
-            if (usuarioSesionActiva) {
-                if (usuarioSesionActiva.rol === 'vendedor') {
-                    if (seccionId === 'config' || seccionId === 'produccion' || seccionId === 'dashboard') {
-                        alert("Acceso Restringido: Tu cuenta de operador no tiene autorización para esta vista.");
-                        return;
-                    }
-                }
-                if (usuarioSesionActiva.rol === 'partner') {
-                    if (seccionId === 'config' || seccionId === 'ventas') {
-                        alert("Acceso Restringido: El perfil Partner no tiene permitido registrar transacciones ni configurar personal.");
-                        return;
-                    }
-                }
+        function navegarHacia(id) {
+            if (!usuarioSesionActiva && !sesionActiva) return;
+            // Restringir acceso a config solo para admin
+            if (id === 'config' && usuarioSesionActiva && usuarioSesionActiva.rol !== 'admin') {
+                alert("Acceso restringido. Solo administradores pueden acceder a esta sección.");
+                return;
             }
-            showSection(seccionId);
+            showSection(id);
             document.getElementById('sidebarMenu').classList.remove('open');
         }
 
-        // MONITOREO EN TIEMPO REAL
-        db.ref('inventario').on('value', snapshot => { inventario = snapshot.val() || []; render(); actualizarCalculosProduccion(); });
-        db.ref('clientes').on('value', snapshot => { clientes = snapshot.val() || []; render(); });
-        db.ref('ventas').on('value', snapshot => { ventas = snapshot.val() || []; render(); calcularTotalesDia(); aplicarFiltrosSimultaneos(); actualizarCalculosProduccion(); });
-        db.ref('produccion').on('value', snapshot => { produccion = snapshot.val() || []; render(); });
-        db.ref('config').on('value', snapshot => { if(snapshot.val()) config = snapshot.val(); render(); });
-        db.ref('numFactura').on('value', snapshot => { numFactura = snapshot.val() || 1; });
-        
-        db.ref('usuarios').on('value', snapshot => { 
-            usuarios = snapshot.val() || []; 
-            if (usuarios.length === 0) {
-                usuarios = [{ nombre: "admin", rol: "admin", clave: "Cascada*123" }];
-                db.ref('usuarios').set(usuarios);
-            }
-            renderUsuariosTabla();
-            
-            if(usuarioSesionActiva) {
-                const refreshed = usuarios.find(usr => usr.nombre.toLowerCase() === usuarioSesionActiva.nombre.toLowerCase());
-                if(refreshed && refreshed.clave === usuarioSesionActiva.clave && refreshed.rol !== usuarioSesionActiva.rol) {
-                    aplicarPerfilDeUsuario(refreshed);
-                }
-            }
-        });
-
-        function intentarIngresar() {
-            const userDigitado = document.getElementById('loginUserInput').value.trim().toLowerCase();
-            const passIntroducida = document.getElementById('loginPass').value;
-            
-            if(!userDigitado || !passIntroducida) return alert("Por favor complete todos los datos de acceso.");
-
-            let u = usuarios.find(usr => usr.nombre.toLowerCase() === userDigitado);
-            
-            if (!u && userDigitado === 'admin' && passIntroducida === 'Cascada*123') {
-                u = { nombre: "admin", rol: "admin", clave: "Cascada*123" };
-            }
-            
-            if(u && u.clave === passIntroducida) {
-                document.getElementById('loginPass').value = '';
-                document.getElementById('loginUserInput').value = '';
-                aplicarPerfilDeUsuario(u, Date.now());
-            } else {
-                alert("Usuario o Contraseña inválidos.");
-            }
-        }
-
-        function aplicarPerfilDeUsuario(u, timestamp = Date.now()) {
-            usuarioSesionActiva = u;
-            // Se encapsula el usuario con su marca de tiempo exacta de login
-            localStorage.setItem('cascada_user_session', JSON.stringify({ user: u, loginTimestamp: timestamp }));
-            
-            document.getElementById('loginScreen').style.setProperty('display', 'none', 'important');
-            document.getElementById('userActiveBadge').innerHTML = `<i class="bi bi-person-fill me-1"></i>${u.nombre.toUpperCase()}`;
-            
-            document.querySelectorAll('.admin-only').forEach(el => el.style.display = '');
-            document.querySelectorAll('.hide-vendedor-live').forEach(el => el.style.setProperty('display', 'block', 'important'));
-            document.querySelectorAll('.hide-vendedor-cards').forEach(el => el.style.setProperty('display', 'flex', 'important'));
-            document.querySelectorAll('.hide-partner-money-cards').forEach(el => el.style.setProperty('display', 'flex', 'important'));
-            document.querySelectorAll('.no-partner-btn').forEach(el => el.style.display = '');
-            document.querySelectorAll('.hide-partner-nav').forEach(el => el.style.display = '');
-            document.querySelectorAll('.hide-partner-block').forEach(el => el.style.display = '');
-            document.querySelectorAll('.hide-vendedor-table-cell').forEach(el => el.style.display = '');
-
-            const currentActiveSec = document.querySelector('.page-section.active');
-            let targetSection = currentActiveSec ? currentActiveSec.id : 'dashboard';
-
-            if(u.rol === 'vendedor') {
-                document.querySelectorAll('.admin-only').forEach(el => el.style.setProperty('display', 'none', 'important'));
-                document.querySelectorAll('.prod-item').forEach(el => el.style.setProperty('display', 'none', 'important'));
-                document.querySelectorAll('.hide-vendedor-live').forEach(el => el.style.setProperty('display', 'none', 'important'));
-                document.querySelectorAll('.hide-vendedor-cards').forEach(el => el.style.setProperty('display', 'none', 'important'));
-                if(targetSection === 'dashboard' || targetSection === 'config' || targetSection === 'produccion') {
-                    targetSection = 'ventas';
-                }
-            } 
-            else if (u.rol === 'partner') {
-                document.querySelectorAll('.only-real-admin').forEach(el => el.style.setProperty('display', 'none', 'important'));
-                document.querySelectorAll('.no-partner-btn').forEach(el => el.style.setProperty('display', 'none', 'important'));
-                document.querySelectorAll('.hide-partner-nav').forEach(el => el.style.setProperty('display', 'none', 'important'));
-                document.querySelectorAll('.hide-partner-block').forEach(el => el.style.setProperty('display', 'none', 'important'));
-                document.querySelectorAll('.hide-partner-money-cards').forEach(el => el.style.setProperty('display', 'none', 'important'));
-                if(targetSection === 'ventas' || targetSection === 'config') {
-                    targetSection = 'dashboard';
-                }
-            }
-            
-            showSection(targetSection);
-            render();
-        }
-
-        function cerrarSesion() {
-            usuarioSesionActiva = null;
-            localStorage.removeItem('cascada_user_session'); 
-            document.getElementById('loginScreen').style.setProperty('display', 'flex', 'important');
-            setTimeout(() => { document.getElementById('loginUserInput').focus(); }, 150);
-        }
-
-        function actualizarMiContrasenaAutonomo() {
-            const nuevaClave = document.getElementById('myNewPassInput').value.trim();
-            if(!nuevaClave) return alert("Por favor escribe una contraseña válida.");
-            
-            const idx = usuarios.findIndex(usr => usr.nombre === usuarioSesionActiva.nombre);
-            if(idx === -1) return alert("Error de consistencia.");
-
-            usuarios[idx].clave = nuevaClave;
-            usuarioSesionActiva.clave = nuevaClave;
-            
-            const sesionActual = JSON.parse(localStorage.getItem('cascada_user_session'));
-            sesionActual.user = usuarioSesionActiva;
-            localStorage.setItem('cascada_user_session', JSON.stringify(sesionActual));
-
-            db.ref('usuarios').set(usuarios).then(() => {
-                document.getElementById('myNewPassInput').value = '';
-                alert("¡Contraseña actualizada exitosamente en la nube!");
-                showSection('dashboard');
+        function showSection(id) {
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.sidebar .nav-link').forEach(l => l.classList.remove('active'));
+            const section = document.getElementById(id);
+            if(section) section.classList.add('active');
+            document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+                if(link.getAttribute('onclick') && link.getAttribute('onclick').includes(id)) link.classList.add('active');
             });
+            if(id === 'produccion') actualizarVentasProduccion();
+            if(id === 'dashboard') { calcularTotalesDia(); actualizarContadorSeleccionadas(); }
+            if(id === 'config') { cargarConfiguracion(); }
+            renderTodo();
         }
 
+        // ============================================================
+        // CONFIGURACIÓN - EMPRESA
+        // ============================================================
+        function cargarConfiguracion() {
+            if (document.getElementById('cfgNom')) {
+                document.getElementById('cfgNom').value = config.nombre || '';
+                document.getElementById('cfgNit').value = config.nit || '';
+                document.getElementById('cfgDir').value = config.dir || '';
+                document.getElementById('cfgTel').value = config.tel || '';
+            }
+        }
+
+        function guardarConfig() {
+            if (!usuarioSesionActiva || usuarioSesionActiva.rol !== 'admin') {
+                return alert("Solo administradores pueden modificar la configuración.");
+            }
+            config = {
+                nombre: document.getElementById('cfgNom').value,
+                nit: document.getElementById('cfgNit').value,
+                dir: document.getElementById('cfgDir').value,
+                tel: document.getElementById('cfgTel').value
+            };
+            db.ref('config').set(config);
+            alert("✅ Datos de empresa actualizados correctamente.");
+        }
+
+        // ============================================================
+        // USUARIOS
+        // ============================================================
         function guardarOEditarUsuarioPorAdmin() {
+            if (!usuarioSesionActiva || usuarioSesionActiva.rol !== 'admin') {
+                return alert("Solo administradores pueden gestionar usuarios.");
+            }
+            
             const nom = document.getElementById('uUserNom').value.trim().toLowerCase().replace(/\s+/g, '');
             const rol = document.getElementById('uUserRol').value;
             const pass = document.getElementById('uUserPass').value.trim();
             const indexMod = parseInt(document.getElementById('uUserIndexMod').value);
 
-            if(!nom || !pass) return alert("Por favor completa los datos del usuario.");
+            if(!nom || !pass) return alert("Por favor completa todos los datos del usuario.");
+            
+            // Verificar que no exista un usuario con el mismo nombre
+            const existe = usuarios.find((u, i) => u.nombre.toLowerCase() === nom && i !== indexMod);
+            if(existe) return alert("Este nombre de usuario ya existe en el sistema.");
             
             if(indexMod === -1) {
-                const existe = usuarios.find(u => u.nombre.toLowerCase() === nom);
-                if(existe) return alert("Este nombre de usuario ya existe en el sistema.");
                 usuarios.push({ nombre: nom, rol: rol, clave: pass });
             } else {
                 if(usuarios[indexMod].nombre === "admin" && rol !== "admin") {
-                    return alert("No puedes quitarle el rol de Administrador a la cuenta raíz.");
+                    return alert("No puedes cambiar el rol de la cuenta administrador.");
                 }
                 usuarios[indexMod] = { nombre: nom, rol: rol, clave: pass };
             }
 
             db.ref('usuarios').set(usuarios).then(() => {
                 limpiarFormularioUsuarioAdmin();
-                alert("Personal guardado correctamente en la nube.");
+                renderUsuariosTabla();
+                alert("✅ Usuario guardado correctamente.");
             });
         }
 
         function cargarUsuarioParaEditar(idx) {
+            if (!usuarioSesionActiva || usuarioSesionActiva.rol !== 'admin') return;
             const u = usuarios[idx];
             document.getElementById('uUserIndexMod').value = idx;
             document.getElementById('uUserNom').value = u.nombre;
             document.getElementById('uUserRol').value = u.rol;
             document.getElementById('uUserPass').value = u.clave;
-            
             document.getElementById('tituloFormUsuario').innerText = "Modificar Perfil Existente";
             document.getElementById('btnCancelarEdicionUser').classList.remove('d-none');
         }
@@ -694,701 +642,846 @@
             document.getElementById('uUserNom').value = "";
             document.getElementById('uUserPass').value = "";
             document.getElementById('uUserRol').value = "vendedor";
-            
             document.getElementById('tituloFormUsuario').innerText = "Crear Nuevo Usuario";
             document.getElementById('btnCancelarEdicionUser').classList.add('d-none');
         }
 
         function eliminarUsuarioPorAdmin(idx) {
-            if(usuarios[idx].nombre === "admin") return alert("No puedes eliminar al usuario raíz.");
-            if(confirm(`¿Deseas revocar de forma permanente el acceso a ${usuarios[idx].nombre}?`)) {
+            if (!usuarioSesionActiva || usuarioSesionActiva.rol !== 'admin') return;
+            if(usuarios[idx].nombre === "admin") return alert("No puedes eliminar al usuario administrador.");
+            if(confirm(`¿Eliminar permanentemente al usuario ${usuarios[idx].nombre}?`)) {
                 usuarios.splice(idx, 1);
                 db.ref('usuarios').set(usuarios);
+                renderUsuariosTabla();
             }
         }
 
         function renderUsuariosTabla() {
             const tbody = document.getElementById('tblUsuariosBody');
-            if(tbody) {
-                tbody.innerHTML = usuarios.map((u, i) => `
-                    <tr>
-                        <td><strong>${u.nombre}</strong></td>
-                        <td><span class="badge ${u.rol === 'admin' ? 'bg-danger': (u.rol === 'partner' ? 'bg-info text-dark' : 'bg-dark')}">${u.rol.toUpperCase()}</span></td>
-                        <td><code>${u.clave}</code></td>
-                        <td class="text-end">
-                            <button class="btn btn-sm btn-action btn-edit" title="Modificar Datos" onclick="cargarUsuarioParaEditar(${i})"><i class="bi bi-pencil"></i></button>
-                            <button class="btn btn-sm btn-action btn-del" title="Eliminar" onclick="eliminarUsuarioPorAdmin(${i})"><i class="bi bi-x-lg"></i></button>
-                        </td>
-                    </tr>
-                `).join('');
-            }
+            if(!tbody) return;
+            tbody.innerHTML = usuarios.map((u, i) => `
+                <tr>
+                    <td><strong>${u.nombre}</strong></td>
+                    <td><span class="badge ${u.rol === 'admin' ? 'bg-danger': (u.rol === 'partner' ? 'bg-info text-dark' : 'bg-dark')}">${u.rol.toUpperCase()}</span></td>
+                    <td><code>${u.clave}</code></td>
+                    <td class="text-end">
+                        <button class="btn btn-sm btn-action btn-edit" title="Modificar" onclick="cargarUsuarioParaEditar(${i})"><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-sm btn-action btn-del" title="Eliminar" onclick="eliminarUsuarioPorAdmin(${i})"><i class="bi bi-x-lg"></i></button>
+                    </td>
+                </tr>
+            `).join('');
         }
 
-        function showSection(id) {
-            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+        // ============================================================
+        // RENDER
+        // ============================================================
+        function renderTodo() {
+            if (!usuarioSesionActiva && !sesionActiva) return;
+            renderInventario();
+            renderClientes();
+            renderVentas();
+            renderProduccion();
+            renderCarrito();
+            cargarConfiguracion();
+        }
+
+        function renderInventario() {
+            const tbody = document.getElementById('invBody');
+            if(!tbody) return;
+            tbody.innerHTML = inventario.map((p, i) => `
+                <tr>
+                    <td class="fw-bold">${p.nombre}</td>
+                    <td>$${p.precio.toLocaleString('de-DE')}</td>
+                    <td>${p.stock || 0}</td>
+                    <td class="text-end">
+                        <button class="btn-action btn-edit" onclick="abrirModProd(${i})"><i class="bi bi-pencil"></i></button>
+                        <button class="btn-action btn-del" onclick="if(confirm('¿Eliminar?')){inventario.splice(${i},1);db.ref('inventario').set(inventario);}"><i class="bi bi-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+            const select = document.getElementById('vProd');
+            if(select) select.innerHTML = '<option value="">--</option>' + inventario.map(p => `<option value="${p.id}">${p.nombre}</option>`).join('');
+            document.getElementById('dataCli').innerHTML = clientes.map(c => `<option value="${c.nombre}">`).join('');
+        }
+
+        function renderClientes() {
+            const tbody = document.getElementById('cliBody');
+            if(!tbody) return;
+            tbody.innerHTML = clientes.map((c, i) => `
+                <tr>
+                    <td class="fw-bold">${c.nombre}</td>
+                    <td>${c.iden || ''}</td>
+                    <td>${c.tel || ''}</td>
+                    <td>${c.city || ''}</td>
+                    <td class="text-end">
+                        <button class="btn-action btn-edit" onclick="abrirModCli(${i})"><i class="bi bi-pencil"></i></button>
+                        <button class="btn-action btn-del" onclick="if(confirm('¿Eliminar?')){clientes.splice(${i},1);db.ref('clientes').set(clientes);}"><i class="bi bi-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderVentas() {
+            const tbody = document.getElementById('histBody');
+            if(!tbody) return;
             
-            const targetSection = document.getElementById(id);
-            if(targetSection) targetSection.classList.add('active');
-            
-            document.querySelectorAll('.sidebar .nav-link').forEach(link => {
-                if(link.getAttribute('onclick') && link.getAttribute('onclick').includes(id)) link.classList.add('active');
-            });
-
-            if(id === 'produccion') { 
-                document.getElementById('prodIdx').value = "-1"; 
-                establecerFechaDeHoy(); 
-                document.getElementById('prodIniAgua').value = 0; document.getElementById('prodFinAgua').value = 0;
-                document.getElementById('prodIniHielo').value = 0; document.getElementById('prodFinHielo').value = 0;
-                document.getElementById('prodIniBot').value = 0; document.getElementById('prodFinBot').value = 0;
-                actualizarCalculosProduccion(); 
-            }
-            if(id === 'dashboard') { 
-                calcularTotalesDia(); 
-                limpiarFiltrosAvanzados(); 
-                if(document.getElementById('checkTodo')) document.getElementById('checkTodo').checked = false;
-                verificarCheckboxesSeleccionados();
-            }
-            if(id === 'ventas') { 
-                if(!editVentaOriginalMetadata) establecerFechaDeHoy(); 
-            }
-            render();
-        }
-
-        function seleccionarTodasLasVentasVisibles(masterCheckbox) {
-            document.querySelectorAll('#histBody tr').forEach(tr => {
-                if (tr.style.display !== 'none') {
-                    const cb = tr.querySelector('.venta-checkbox');
-                    if (cb) cb.checked = masterCheckbox.checked;
-                }
-            });
-            verificarCheckboxesSeleccionados();
-        }
-
-        function verificarCheckboxesSeleccionados() {
-            const seleccionados = document.querySelectorAll('.venta-checkbox:checked').length;
-            const btnBorrado = document.getElementById('btnBorradoMasivo');
-            if(btnBorrado) {
-                if (seleccionados > 0 && usuarioSesionActiva && usuarioSesionActiva.rol === 'admin') {
-                    btnBorrado.classList.remove('d-none');
-                    btnBorrado.innerText = `Eliminar Seleccionadas (${seleccionados})`;
-                } else {
-                    btnBorrado.classList.add('d-none');
-                }
-            }
-        }
-
-        function aplicarFiltrosSimultaneos() {
-            const queryCliente = document.getElementById('filtroCliente').value.toLowerCase().trim();
-            const queryFechaRaw = document.getElementById('filtroFecha').value;
-            
-            let queryFechaFormateada = "";
-            if (queryFechaRaw) {
-                const partes = queryFechaRaw.split('-');
-                queryFechaFormateada = `${parseInt(partes[2])}/${parseInt(partes[1])}/${partes[0]}`;
-            }
-
-            let acumuladoAgua = 0, acumuladoHielo = 0, acumuladoBotellon = 0;
-
-            document.querySelectorAll('#histBody tr').forEach(tr => {
-                const botonDetalle = tr.querySelector('.btn-view');
-                if(!botonDetalle) return;
-                const idxVenta = parseInt(botonDetalle.getAttribute('onclick').match(/\d+/)[0]);
-                const ventaObj = ventas[idxVenta];
-                if(!ventaObj) return;
-
-                let cumpleCliente = true;
-                let cumpleFecha = true;
-
-                if (queryCliente && !ventaObj.cliente.toLowerCase().includes(queryCliente)) cumpleCliente = false;
-                if (queryFechaFormateada && ventaObj.fecha !== queryFechaFormateada) cumpleFecha = false;
-
-                if (cumpleCliente && cumpleFecha) {
-                    tr.style.display = '';
-                    ventaObj.items.forEach(item => {
-                        const nombreProd = item.nombre.toLowerCase();
-                        if (nombreProd.includes("agua")) acumuladoAgua += (parseInt(item.cant) || 0);
-                        else if (nombreProd.includes("hielo")) acumuladoHielo += (parseInt(item.cant) || 0);
-                        else if (nombreProd.includes("botellon") || nombreProd.includes("botellón")) acumuladoBotellon += (parseInt(item.cant) || 0);
-                    });
-                } else {
-                    tr.style.display = 'none';
-                    const cb = tr.querySelector('.venta-checkbox');
-                    if (cb) cb.checked = false;
-                }
-            });
-
-            if (document.getElementById('historiaAgua')) document.getElementById('historiaAgua').innerText = acumuladoAgua;
-            if (document.getElementById('historiaHielo')) document.getElementById('historiaHielo').innerText = acumuladoHielo;
-            if (document.getElementById('historiaBotellon')) document.getElementById('historiaBotellon').innerText = acumuladoBotellon;
-            verificarCheckboxesSeleccionados();
-        }
-
-        function limpiarFiltrosAvanzados() {
-            if(document.getElementById('filtroCliente')) document.getElementById('filtroCliente').value = "";
-            if(document.getElementById('filtroFecha')) document.getElementById('filtroFecha').value = "";
-            const masterCb = document.getElementById('checkTodo');
-            if(masterCb) masterCb.checked = false;
-            aplicarFiltrosSimultaneos();
-        }
-
-        function filtrarPorIndicador(tipo) {
-            if (usuarioSesionActiva && (usuarioSesionActiva.rol === 'vendedor' || usuarioSesionActiva.rol === 'partner')) return; 
-            limpiarFiltrosAvanzados();
-            const hoyStr = new Date().toLocaleDateString();
-            document.querySelectorAll('#histBody tr').forEach(tr => {
-                const text = tr.innerText.toLowerCase();
-                if (tipo === 'hoy') tr.style.display = text.includes(hoyStr) ? '' : 'none';
-                else if (tipo === 'pagado') tr.style.display = (text.includes(hoyStr) && text.includes('pago')) ? '' : 'none';
-                else if (tipo === 'debe') tr.style.display = (text.includes(hoyStr) && text.includes('debe')) ? '' : 'none';
-            });
-            verificarCheckboxesSeleccionados();
-        }
-
-        function agregarStockEscrito(idx) {
-            verificarExpiracionSesion();
-            if (usuarioSesionActiva && usuarioSesionActiva.rol === 'partner') return;
-            const inputElement = document.getElementById(`addStockInput_${idx}`);
-            if(!inputElement) return;
-            let cantidadAAgregar = parseInt(inputElement.value);
-            if (isNaN(cantidadAAgregar) || cantidadAAgregar <= 0) return alert("Por favor ingresa una cantidad válida");
-            
-            let stockActual = parseInt(inventario[idx].stock) || 0;
-            inventario[idx].stock = stockActual + cantidadAAgregar;
-            
-            // RASTREO EN CONSOLA / LOG LOCAL DE QUIÉN MODIFICÓ EL STOCK DIRECTO
-            const operadorActual = usuarioSesionActiva ? usuarioSesionActiva.nombre : "Sistema";
-            console.log(`[AUDITORÍA] El usuario ${operadorActual} agregó ${cantidadAAgregar} unidades a ${inventario[idx].nombre}`);
-
-            db.ref('inventario').set(inventario).then(() => {
-                inputElement.value = '';
-                alert(`Inventario modificado exitosamente por el usuario: ${operadorActual.toUpperCase()}`);
-            });
-        }
-
-        function actualizarStockDirectoInput(idx, valor) {
-            verificarExpiracionSesion();
-            if (usuarioSesionActiva && usuarioSesionActiva.rol === 'partner') {
-                alert("Modificación denegada: El perfil Partner no puede alterar stock.");
-                render();
+            if (!ventas || ventas.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="text-center text-muted py-3">No hay ventas registradas</td></tr>`;
                 return;
             }
-            let nVal = parseInt(valor);
-            if (isNaN(nVal) || nVal < 0) nVal = 0;
-            inventario[idx].stock = nVal;
-            db.ref('inventario').set(inventario);
-        }
-
-        function calcularTotalesDia() {
-            const hoyStr = new Date().toLocaleDateString();
-            let vendidoHoy = 0, recaudadoHoy = 0, carteraHoy = 0;
-            let totalAguaHoy = 0, totalHieloHoy = 0, totalBotellonHoy = 0;
-
-            ventas.forEach(v => {
-                if(v.fecha === hoyStr) {
-                    vendidoHoy += v.total;
-                    recaudadoHoy += v.abono;
-                    carteraHoy += v.deuda;
-
+            
+            tbody.innerHTML = ventas.slice().reverse().map((v, i) => {
+                const idx = ventas.length - 1 - i;
+                
+                let agua = 0, hielo = 0, botellon = 0;
+                if (v.items) {
                     v.items.forEach(item => {
-                        const n = item.nombre.toLowerCase();
-                        if(n.includes("agua")) totalAguaHoy += (parseInt(item.cant) || 0);
-                        else if(n.includes("hielo")) totalHieloHoy += (parseInt(item.cant) || 0);
-                        else if(n.includes("botellon") || n.includes("botellón")) totalBotellonHoy += (parseInt(item.cant) || 0);
+                        const name = item.nombre.toLowerCase();
+                        if(name.includes("agua")) agua += (parseInt(item.cant) || 0);
+                        else if(name.includes("hielo")) hielo += (parseInt(item.cant) || 0);
+                        else if(name.includes("botellon") || name.includes("botellón")) botellon += (parseInt(item.cant) || 0);
                     });
                 }
+                
+                let detalleHtml = '';
+                if(agua > 0) detalleHtml += `<span class="badge bg-primary me-1">${agua} Agua</span>`;
+                if(hielo > 0) detalleHtml += `<span class="badge bg-info me-1">${hielo} Hielo</span>`;
+                if(botellon > 0) detalleHtml += `<span class="badge bg-secondary me-1">${botellon} Bot.</span>`;
+                if(!detalleHtml) detalleHtml = '<span class="text-muted">Sin productos</span>';
+                
+                return `
+                    <tr>
+                        <td class="checkbox-column"><input type="checkbox" class="venta-checkbox" data-index="${idx}" onchange="actualizarContadorSeleccionadas()"></td>
+                        <td><strong class="text-primary">${v.id || 'N/A'}</strong></td>
+                        <td><small>${v.fecha || ''}<br>${v.hora || ''}</small></td>
+                        <td>${v.cliente || 'Cliente General'}</td>
+                        <td>${detalleHtml}</td>
+                        <td>$${(v.total || 0).toLocaleString('de-DE')}</td>
+                        <td><span class="badge ${v.estado === 'DEBE' ? 'bg-danger' : 'bg-success'}">${v.estado || 'PAGO'}</span></td>
+                        <td class="text-center">
+                            <button class="btn-action btn-view" onclick="verDetalleFactura(${idx})" title="Ver Detalle"><i class="bi bi-eye-fill"></i></button>
+                            <button class="btn-action btn-print" onclick="imprimirFactura(${idx})" title="Imprimir"><i class="bi bi-printer"></i></button>
+                            <button class="btn-action btn-edit" onclick="editarFactura(${idx})" title="Editar"><i class="bi bi-pencil-square"></i></button>
+                            <button class="btn-action btn-del" onclick="eliminarFactura(${idx})" title="Eliminar"><i class="bi bi-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            document.querySelectorAll('.venta-checkbox').forEach(cb => {
+                const idx = parseInt(cb.dataset.index);
+                if (ventasSeleccionadas.includes(idx)) {
+                    cb.checked = true;
+                }
             });
-
-            if(document.getElementById('dashVendido')) document.getElementById('dashVendido').innerText = `$${vendidoHoy.toLocaleString('de-DE')}`;
-            if(document.getElementById('dashRecaudado')) document.getElementById('dashRecaudado').innerText = `$${recaudadoHoy.toLocaleString('de-DE')}`;
-            if(document.getElementById('dashCartera')) document.getElementById('dashCartera').innerText = `$${carteraHoy.toLocaleString('de-DE')}`;
             
-            if(document.getElementById('liveAgua')) document.getElementById('liveAgua').innerText = totalAguaHoy;
-            if(document.getElementById('liveHielo')) document.getElementById('liveHielo').innerText = totalHieloHoy;
-            if(document.getElementById('liveBotellon')) document.getElementById('liveBotellon').innerText = totalBotellonHoy;
-            
-            let cargaTotalUnds = totalAguaHoy + totalHieloHoy + totalBotellonHoy;
-            if(document.getElementById('liveMontoTotal')) document.getElementById('liveMontoTotal').innerText = `${cargaTotalUnds} und`;
+            actualizarContadorSeleccionadas();
         }
 
-        function actualizarCalculosProduccion() {
-            if (document.getElementById('prodIdx') && document.getElementById('prodIdx').value !== "-1") return;
-            const fechaFiltroTarget = obtenerFechaFormateadaDesdeInput('prodFechaManual');
-            let totalUnidadesVendidasFecha = 0;
+        function renderProduccion() {
+            const tbody = document.getElementById('prodHistBody');
+            if(!tbody) return;
             
-            ventas.forEach(v => { 
-                if(v.fecha === fechaFiltroTarget) { 
-                    v.items.forEach(item => { totalUnidadesVendidasFecha += (parseInt(item.cant) || 0); });
-                } 
+            if (!produccion || produccion.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted py-3">No hay arqueos registrados</td></tr>`;
+                return;
+            }
+            
+            tbody.innerHTML = produccion.slice().reverse().map((p, i) => {
+                const idx = produccion.length - 1 - i;
+                return `
+                    <tr>
+                        <td><small>${p.fecha || ''}<br>${p.hora || ''}</small></td>
+                        <td><span class="badge bg-light text-dark border">${p.usuario || 'General'}</span></td>
+                        <td>${p.ini || 0}</td>
+                        <td>${p.ven || 0}</td>
+                        <td><strong>${p.fin || 0}</strong></td>
+                        <td><span class="fw-bold text-success">+${p.res || 0}</span></td>
+                        <td class="text-end">
+                            <button class="btn-action btn-edit" onclick="editarArqueo(${idx})"><i class="bi bi-pencil"></i></button>
+                            <button class="btn-action btn-del" onclick="if(confirm('¿Eliminar arqueo?')){produccion.splice(${idx},1);db.ref('produccion').set(produccion);}"><i class="bi bi-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderCarrito() {
+            const tbody = document.getElementById('cartBody');
+            if(!tbody) return;
+            let total = 0, html = '';
+            carrito.forEach((c, i) => {
+                total += c.sub;
+                html += `<tr><td>${c.nombre}</td><td>${c.cant}</td><td>$${c.sub.toLocaleString('de-DE')}</td><td class="text-end"><button class="btn-action btn-del" onclick="carrito.splice(${i},1);renderCarrito();"><i class="bi bi-trash"></i></button></td></tr>`;
+            });
+            tbody.innerHTML = html;
+            document.getElementById('totalDisp').innerText = '$' + total.toLocaleString('de-DE');
+        }
+
+        // ============================================================
+        // SELECCIÓN MÚLTIPLE DE VENTAS
+        // ============================================================
+        function seleccionarTodasVentas(masterCheckbox) {
+            document.querySelectorAll('.venta-checkbox').forEach(cb => {
+                cb.checked = masterCheckbox.checked;
+            });
+            actualizarContadorSeleccionadas();
+        }
+
+        function actualizarContadorSeleccionadas() {
+            const checkboxes = document.querySelectorAll('.venta-checkbox:checked');
+            const count = checkboxes.length;
+            const btn = document.getElementById('btnBorradoMasivo');
+            const contador = document.getElementById('contadorSeleccionadas');
+            
+            ventasSeleccionadas = [];
+            checkboxes.forEach(cb => {
+                ventasSeleccionadas.push(parseInt(cb.dataset.index));
             });
             
-            if(document.getElementById('prodVentas')) document.getElementById('prodVentas').value = totalUnidadesVendidasFecha;
-            calcularProdReal();
-        }
-
-        function calcularProdReal() {
-            const iniTotal = (parseFloat(document.getElementById('prodIniAgua').value) || 0) + (parseFloat(document.getElementById('prodIniHielo').value) || 0) + (parseFloat(document.getElementById('prodIniBot').value) || 0);
-            document.getElementById('prodIni').value = iniTotal;
-
-            const finTotal = (parseFloat(document.getElementById('prodFinAgua').value) || 0) + (parseFloat(document.getElementById('prodFinHielo').value) || 0) + (parseFloat(document.getElementById('prodFinBot').value) || 0);
-            document.getElementById('prodFin').value = finTotal;
-
-            const ven = parseFloat(document.getElementById('prodVentas').value) || 0;
-            if(document.getElementById('prodRes')) document.getElementById('prodRes').innerText = (finTotal + ven) - iniTotal;
-        }
-
-        function guardarArqueoSinClave() {
-            verificarExpiracionSesion();
-            if(usuarioSesionActiva && usuarioSesionActiva.rol === 'partner') return;
-            const pIdx = parseInt(document.getElementById('prodIdx').value);
+            if (contador) contador.textContent = count;
             
-            if(pIdx !== -1) {
-                solicitarSecurity('prodSave', pIdx);
-            } else {
-                if(!confirm("¿Está seguro de que desea guardar el arqueo de producción?")) return; 
-
-                actualizarCalculosProduccion();
-                const ini = parseFloat(document.getElementById('prodIni').value) || 0;
-                const ven = parseFloat(document.getElementById('prodVentas').value) || 0;
-                const fin = parseFloat(document.getElementById('prodFin').value) || 0;
-                const res = (fin + ven - ini);
-                const hoy = new Date();
-
-                const fechaFinalArqueo = obtenerFechaFormateadaDesdeInput('prodFechaManual');
-
-                let ventasTurnoAgua = 0, ventasTurnoHielo = 0, ventasTurnoBotellon = 0;
-                ventas.forEach(v => {
-                    if(v.fecha === fechaFinalArqueo) {
-                        v.items.forEach(item => {
-                            const n = item.nombre.toLowerCase();
-                            if(n.includes("agua")) ventasTurnoAgua += (parseInt(item.cant) || 0);
-                            else if(n.includes("hielo")) ventasTurnoHielo += (parseInt(item.cant) || 0);
-                            else if(n.includes("botellon") || n.includes("botellón")) ventasTurnoBotellon += (parseInt(item.cant) || 0);
-                        });
-                    }
-                });
-
-                const finalAgua = parseFloat(document.getElementById('prodFinAgua').value) || 0;
-                const iniAgua = parseFloat(document.getElementById('prodIniAgua').value) || 0;
-                const finalHielo = parseFloat(document.getElementById('prodFinHielo').value) || 0;
-                const iniHielo = parseFloat(document.getElementById('prodIniHielo').value) || 0;
-                const finalBot = parseFloat(document.getElementById('prodFinBot').value) || 0;
-                const iniBot = parseFloat(document.getElementById('prodIniBot').value) || 0;
-
-                // ASIGNACIÓN DE AUDITORÍA: GUARDA QUIÉN CREÓ EL ARQUEO ORIGINAL
-                const responsableArqueo = usuarioSesionActiva ? usuarioSesionActiva.nombre : "General";
-
-                const obj = { 
-                    fecha: fechaFinalArqueo, 
-                    hora: hoy.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-                    ini, ven, fin, res,
-                    usuario: responsableArqueo,
-                    detAgua: (finalAgua + ventasTurnoAgua) - iniAgua, 
-                    detHielo: (finalHielo + ventasTurnoHielo) - iniHielo,
-                    detBotellon: (finalBot + ventasTurnoBotellon) - iniBot,
-                    metaIniAgua: iniAgua, metaFinAgua: finalAgua,
-                    metaIniHielo: iniHielo, metaFinHielo: finalHielo,
-                    metaIniBot: iniBot, metaFinBot: finalBot
-                };
-                
-                inventario.forEach(p => {
-                    const nombreProd = p.nombre.toLowerCase();
-                    if (nombreProd.includes("agua")) p.stock = finalAgua;
-                    else if (nombreProd.includes("hielo")) p.stock = finalHielo;
-                    else if (nombreProd.includes("botellon") || nombreProd.includes("botellón")) p.stock = finalBot;
-                });
-
-                if(!produccion) produccion = [];
-                produccion.push(obj);
-                
-                document.getElementById('prodIniAgua').value = 0; document.getElementById('prodFinAgua').value = 0;
-                document.getElementById('prodIniHielo').value = 0; document.getElementById('prodFinHielo').value = 0;
-                document.getElementById('prodIniBot').value = 0; document.getElementById('prodFinBot').value = 0;
-                
-                db.ref('produccion').set(produccion);
-                db.ref('inventario').set(inventario);
-                establecerFechaDeHoy(); 
-                actualizarCalculosProduccion();
-                render(); 
-                alert(`Arqueo registrado en la nube por el usuario: ${responsableArqueo.toUpperCase()}`);
+            if (btn) {
+                if (count > 0 && usuarioSesionActiva && usuarioSesionActiva.rol !== 'vendedor') {
+                    btn.classList.add('visible');
+                    btn.style.display = 'inline-block';
+                } else {
+                    btn.classList.remove('visible');
+                    btn.style.display = 'none';
+                }
+            }
+            
+            const master = document.getElementById('checkTodos');
+            if (master) {
+                const total = document.querySelectorAll('.venta-checkbox').length;
+                const checked = document.querySelectorAll('.venta-checkbox:checked').length;
+                master.checked = total > 0 && checked === total;
+                master.indeterminate = checked > 0 && checked < total;
             }
         }
 
-        function solicitarSeguridadMasiva() {
-            if(usuarioSesionActiva && usuarioSesionActiva.rol === 'partner') return;
-            const seleccionados = document.querySelectorAll('.venta-checkbox:checked').length;
-            document.getElementById('secAction').value = "delVentasMasivas";
-            document.getElementById('secIdx').value = "-1";
-            document.getElementById('secPass').value = "";
-            document.getElementById('secMsg').innerText = `¿Estás seguro de eliminar las ${seleccionados} facturas seleccionadas? El stock se devolverá al inventario.`;
-            if(mSec) mSec.show();
-        }
-
-        function ejecutarAccionSecure() { 
-            if(document.getElementById('secPass').value !== CLAVE_ADMIN) return alert("Clave Incorrecta"); 
-            const acc = document.getElementById('secAction').value; 
-            const idx = parseInt(document.getElementById('secIdx').value); 
-            const adminEjecutor = usuarioSesionActiva ? usuarioSesionActiva.nombre : "Admin";
+        // ============================================================
+        // ELIMINACIÓN MASIVA DE VENTAS
+        // ============================================================
+        function eliminarVentasMasivas() {
+            if(!usuarioSesionActiva) return alert("Inicia sesión");
+            if(usuarioSesionActiva.rol === 'vendedor') return alert("No tienes permisos para eliminar");
             
-            if(acc === 'delVenta') { 
-                console.log(`[AUDITORÍA] La venta ${ventas[idx].id} fue eliminada por el usuario ${adminEjecutor}`);
-                ventas[idx].items.forEach(c => { const p = inventario.find(i => i.id == c.id); if(p) p.stock += c.cant; }); 
-                ventas.splice(idx,1); 
-                db.ref('inventario').set(inventario); db.ref('ventas').set(ventas); 
-            } 
-            else if(acc === 'delVentasMasivas') {
-                let indicesAEliminar = [];
-                document.querySelectorAll('.venta-checkbox:checked').forEach(cb => { indicesAEliminar.push(parseInt(cb.getAttribute('data-index'))); });
-                indicesAEliminar.sort((a, b) => b - a);
-                
-                indicesAEliminar.forEach(originalIdx => {
-                    const v = ventas[originalIdx];
-                    if(v) {
-                        console.log(`[AUDITORÍA] Borrado masivo: Venta ${v.id} eliminada por ${adminEjecutor}`);
-                        v.items.forEach(c => { const p = inventario.find(i => i.id == c.id); if(p) p.stock += c.cant; });
-                        ventas.splice(originalIdx, 1);
-                    }
-                });
-                document.getElementById('checkTodo').checked = false;
-                db.ref('inventario').set(inventario); db.ref('ventas').set(ventas);
-                alert(`Facturas de venta eliminadas con éxito por el administrador: ${adminEjecutor.toUpperCase()}`);
-            }
-            else if(acc === 'editVenta') { 
-                const v = ventas[idx]; 
-                v.items.forEach(c => { const p = inventario.find(i => i.id == c.id); if(p) p.stock += c.cant; }); 
-                document.getElementById('vCliente').value = v.cliente; 
-                carrito = [...v.items]; 
-                
-                // RASTREO DE EDICIÓN: Conserva quién creó y concatena el nombre del editor
-                let usuarioFinalEditor = v.usuario || "Gral";
-                if(!usuarioFinalEditor.includes("Editado por")) {
-                    usuarioFinalEditor += ` (Editado por: ${adminEjecutor})`;
+            const seleccionados = document.querySelectorAll('.venta-checkbox:checked');
+            if(seleccionados.length === 0) return alert("No has seleccionado ninguna venta");
+            
+            const ids = [];
+            seleccionados.forEach(cb => {
+                const idx = parseInt(cb.dataset.index);
+                if (ventas[idx]) ids.push({ idx, id: ventas[idx].id });
+            });
+            
+            if(!confirm(`¿Eliminar ${ids.length} facturas seleccionadas? Los productos se devolverán al inventario.`)) return;
+            
+            const indicesAEliminar = ids.map(item => item.idx).sort((a, b) => b - a);
+            
+            indicesAEliminar.forEach(idx => {
+                const v = ventas[idx];
+                if(v && v.items) {
+                    v.items.forEach(item => {
+                        const p = inventario.find(i => i.id == item.id);
+                        if(p) p.stock += item.cant;
+                    });
+                    ventas.splice(idx, 1);
                 }
-
-                editVentaOriginalMetadata = {
-                    id: v.id, fecha: v.fecha, hora: v.hora, posicionOriginal: idx, arqueado: v.arqueado || false,
-                    usuario: usuarioFinalEditor
-                };
-
-                if (v.fecha) {
-                    const partes = v.fecha.split('/');
-                    document.getElementById('vFechaManual').value = `${partes[2]}-${partes[1].padStart(2, '0')}-${partes[0].padStart(2, '0')}`;
-                }
-
-                ventas.splice(idx,1); 
-                db.ref('inventario').set(inventario); db.ref('ventas').set(ventas); 
-                showSection('ventas'); renderCart(); 
-            } 
-            else if(acc === 'delProd') { 
-                console.log(`[AUDITORÍA] Producto ${inventario[idx].nombre} eliminado por ${adminEjecutor}`);
-                inventario.splice(idx, 1); db.ref('inventario').set(inventario); 
-            } 
-            else if(acc === 'delCli') { 
-                console.log(`[AUDITORÍA] Cliente ${clientes[idx].nombre} eliminado por ${adminEjecutor}`);
-                clientes.splice(idx, 1); db.ref('clientes').set(clientes); 
-            } 
-            else if(acc === 'prodSave') { 
-                const p = produccion[idx];
-                const iniAgua = parseFloat(document.getElementById('prodIniAgua').value) || 0;
-                const finAgua = parseFloat(document.getElementById('prodFinAgua').value) || 0;
-                const iniHielo = parseFloat(document.getElementById('prodIniHielo').value) || 0;
-                const finHielo = parseFloat(document.getElementById('prodFinHielo').value) || 0;
-                const iniBot = parseFloat(document.getElementById('prodIniBot').value) || 0;
-                const finBot = parseFloat(document.getElementById('prodFinBot').value) || 0;
-
-                p.metaIniAgua = iniAgua; p.metaFinAgua = finAgua;
-                p.metaIniHielo = iniHielo; p.metaFinHielo = finHielo;
-                p.metaIniBot = iniBot; p.metaFinBot = finBot;
-                p.ini = iniAgua + iniHielo + iniBot; p.fin = finAgua + finHielo + finBot;
-                
-                // RASTREO: Registra qué administrador modificó el arqueo histórico
-                p.usuario = `${p.usuario || 'Gral'} (Modificado por: ${adminEjecutor})`;
-
-                const targetFecha = p.fecha;
-                let unidadesTotalesVendidasFecha = 0, ventasTurnoAgua = 0, ventasTurnoHielo = 0, ventasTurnoBotellon = 0;
-                
-                ventas.forEach(v => {
-                    if(v.fecha === targetFecha) {
-                        v.items.forEach(item => {
-                            const uCant = (parseInt(item.cant) || 0);
-                            unidadesTotalesVendidasFecha += uCant;
-                            const n = item.nombre.toLowerCase();
-                            if(n.includes("agua")) ventasTurnoAgua += uCant;
-                            else if(n.includes("hielo")) ventasTurnoHielo += uCant;
-                            else if(n.includes("botellon") || n.includes("botellón")) ventasTurnoBotellon += uCant;
-                        });
-                    }
-                });
-
-                p.ven = unidadesTotalesVendidasFecha;
-                p.res = (p.fin + p.ven - p.ini);
-                p.detAgua = (finAgua + ventasTurnoAgua) - iniAgua; 
-                p.detHielo = (finHielo + ventasTurnoHielo) - iniHielo;
-                p.detBotellon = (finBot + ventasTurnoBotellon) - iniBot;
-                
-                inventario.forEach(prod => {
-                    const nombreProd = prod.nombre.toLowerCase();
-                    if (nombreProd.includes("agua")) prod.stock = finAgua;
-                    else if (nombreProd.includes("hielo")) prod.stock = finHielo;
-                    else if (nombreProd.includes("botellon") || prod.nombre.toLowerCase().includes("botellón")) prod.stock = finBot;
-                });
-                
-                document.getElementById('prodIdx').value = "-1"; 
-                db.ref('produccion').set(produccion); db.ref('inventario').set(inventario);
-                
-                document.getElementById('prodIniAgua').value = 0; document.getElementById('prodFinAgua').value = 0;
-                document.getElementById('prodIniHielo').value = 0; document.getElementById('prodFinHielo').value = 0;
-                document.getElementById('prodIniBot').value = 0; document.getElementById('prodFinBot').value = 0;
-
-                establecerFechaDeHoy(); actualizarCalculosProduccion();
-                alert(`Arqueo histórico modificado por: ${adminEjecutor.toUpperCase()}`);
-            } 
-            else if(acc === 'delArqueo') { 
-                console.log(`[AUDITORÍA] Arqueo del día ${produccion[idx].fecha} eliminado por ${adminEjecutor}`);
-                produccion.splice(idx, 1); db.ref('produccion').set(produccion); 
-            } 
-            else if(acc === 'editArqueo') { 
-                const p = produccion[idx]; document.getElementById('prodIdx').value = idx; 
-                document.getElementById('prodIniAgua').value = p.metaIniAgua || 0;
-                document.getElementById('prodFinAgua').value = p.metaFinAgua || 0;
-                document.getElementById('prodIniHielo').value = p.metaIniHielo || 0;
-                document.getElementById('prodFinHielo').value = p.metaFinHielo || 0;
-                document.getElementById('prodIniBot').value = p.metaIniBot || 0;
-                document.getElementById('prodFinBot').value = p.metaFinBot || 0;
-
-                let unidadesTotalesDia = 0;
-                ventas.forEach(v => { if(v.fecha === p.fecha) { v.items.forEach(item => { unidadesTotalesDia += (parseInt(item.cant) || 0); }); } });
-                
-                document.getElementById('prodVentas').value = unidadesTotalesDia;
-                if(p.fecha) {
-                    const partes = p.fecha.split('/');
-                    document.getElementById('prodFechaManual').value = `${partes[2]}-${partes[1].padStart(2, '0')}-${partes[0].padStart(2, '0')}`;
-                }
-                calcularProdReal(); 
-            } 
-            if(mSec) mSec.hide(); render(); 
+            });
+            
+            db.ref('inventario').set(inventario);
+            db.ref('ventas').set(ventas);
+            
+            ventasSeleccionadas = [];
+            document.getElementById('checkTodos').checked = false;
+            
+            renderTodo();
+            calcularTotalesDia();
+            actualizarContadorSeleccionadas();
+            
+            alert(`✅ ${ids.length} facturas eliminadas. Stock devuelto al inventario.`);
         }
 
-        function imprimirFactura(v) { 
-            const isRestringido = (usuarioSesionActiva && (usuarioSesionActiva.rol === 'vendedor' || usuarioSesionActiva.rol === 'partner'));
-            const w = window.open('', '_blank'); 
-            w.document.write(`<html><body onload="window.print();window.close()" style="width:280px;font-family:monospace;padding:10px;"><center><strong>${config.nombre}</strong><br>NIT: ${config.nit}<br>${config.dir}<br>Tel: ${config.tel}<br>----------------------------<br>FACTURA: ${v.id}<br>FECHA: ${v.fecha} ${v.hora}<br>OPERADOR: ${v.usuario || 'Gral'}<br>CLIENTE: ${v.cliente}<br>----------------------------</center><table style="width:100%;font-size:12px;">${v.items.map(i => `<tr><td>${i.nombre} x${i.cant}</td><td align="right" style="${isRestringido ? 'display:none;':''}">$${i.sub.toLocaleString('de-DE')}</td></tr>`).join('')}</table><div style="${isRestringido ? 'display:none;':''}">----------------------------<br><strong>TOTAL: <span style="float:right">$${v.total.toLocaleString('de-DE')}</span></strong><br>ABONO: <span style="float:right">$${v.abono.toLocaleString('de-DE')}</span><br>SALDO: <span style="float:right">$${v.deuda.toLocaleString('de-DE')}</span></div>----------------------------<br><center>Gracias por su compra</center></body></html>`); 
-            w.document.close(); 
-        }
+        // ============================================================
+        // FUNCIONES DE VENTAS
+        // ============================================================
         
-        function procesarFactura() { 
-            verificarExpiracionSesion();
-            if(carrito.length === 0) return alert("Carrito vacío"); 
-            const t = carrito.reduce((a,b)=>a+b.sub,0); 
-            const a = obtenerValorPuro(document.getElementById('vAbono').value); 
-            let idFacturaFinal, fechaFinal, horaFinal, arqueadoEstado, usuarioDespacho;
-
-            const fechaManualRaw = document.getElementById('vFechaManual').value;
-            if(fechaManualRaw) {
-                const partes = fechaManualRaw.split('-');
-                fechaFinal = `${parseInt(partes[2])}/${parseInt(partes[1])}/${partes[0]}`;
-            } else {
-                fechaFinal = new Date().toLocaleDateString();
+        function verDetalleFactura(idx) {
+            const v = ventas[idx];
+            if(!v) return;
+            
+            document.getElementById('detTitle').innerText = `Detalle: ${v.id} - ${v.cliente}`;
+            
+            let html = '';
+            if (v.items) {
+                v.items.forEach(item => {
+                    html += `<tr>
+                        <td>${item.nombre}</td>
+                        <td>${item.cant}</td>
+                        <td>$${item.precio.toLocaleString('de-DE')}</td>
+                        <td>$${item.sub.toLocaleString('de-DE')}</td>
+                    </tr>`;
+                });
             }
+            document.getElementById('detBody').innerHTML = html;
+            document.getElementById('detTotal').innerHTML = `
+                Total: $${(v.total || 0).toLocaleString('de-DE')} | 
+                Abono: $${(v.abono || 0).toLocaleString('de-DE')} | 
+                Saldo: $${(v.deuda || 0).toLocaleString('de-DE')}
+            `;
+            
+            mDet.show();
+        }
 
-            usuarioDespacho = usuarioSesionActiva ? usuarioSesionActiva.nombre : "Sistema General";
+        function imprimirFactura(idx) {
+            const v = ventas[idx];
+            if(!v) return;
+            
+            const empresa = config || { nombre: "CASCADA DEL CESAR", nit: "", dir: "", tel: "" };
+            
+            const w = window.open('', '_blank');
+            w.document.write(`
+                <html>
+                <head><title>Factura ${v.id}</title></head>
+                <body onload="window.print();window.close()" style="width:280px;font-family:monospace;padding:10px;">
+                    <center>
+                        <strong>${empresa.nombre || "CASCADA DEL CESAR"}</strong><br>
+                        NIT: ${empresa.nit || ""}<br>
+                        ${empresa.dir || ""}<br>
+                        Tel: ${empresa.tel || ""}<br>
+                        ----------------------------<br>
+                        FACTURA: ${v.id}<br>
+                        FECHA: ${v.fecha} ${v.hora}<br>
+                        CLIENTE: ${v.cliente}<br>
+                        ----------------------------
+                    </center>
+                    <table style="width:100%;font-size:12px;">
+                        ${v.items ? v.items.map(i => `<tr><td>${i.nombre} x${i.cant}</td><td align="right">$${i.sub.toLocaleString('de-DE')}</td></tr>`).join('') : ''}
+                    </table>
+                    ----------------------------<br>
+                    <strong>TOTAL: <span style="float:right">$${(v.total || 0).toLocaleString('de-DE')}</span></strong><br>
+                    ABONO: <span style="float:right">$${(v.abono || 0).toLocaleString('de-DE')}</span><br>
+                    SALDO: <span style="float:right">$${(v.deuda || 0).toLocaleString('de-DE')}</span><br>
+                    ----------------------------<br>
+                    <center>Gracias por su compra</center>
+                </body>
+                </html>
+            `);
+            w.document.close();
+        }
 
+        function editarFactura(idx) {
+            if(!usuarioSesionActiva) return alert("Inicia sesión");
+            if(usuarioSesionActiva.rol === 'vendedor') return alert("No tienes permisos para editar");
+            
+            const v = ventas[idx];
+            if(!v) return;
+            
+            if(!confirm(`¿Editar factura ${v.id}? Los productos se devolverán al inventario.`)) return;
+            
+            if (v.items) {
+                v.items.forEach(item => {
+                    const p = inventario.find(i => i.id == item.id);
+                    if(p) p.stock += item.cant;
+                });
+            }
+            
+            document.getElementById('vCliente').value = v.cliente || '';
+            carrito = v.items ? v.items.map(item => ({ ...item })) : [];
+            
+            editVentaOriginalMetadata = {
+                id: v.id,
+                fecha: v.fecha,
+                hora: v.hora,
+                posicionOriginal: idx,
+                usuario: v.usuario
+            };
+            
+            if(v.fecha) {
+                const partes = v.fecha.split('/');
+                document.getElementById('vFechaManual').value = `${partes[2]}-${partes[1].padStart(2,'0')}-${partes[0].padStart(2,'0')}`;
+            }
+            
+            ventas.splice(idx, 1);
+            
+            db.ref('inventario').set(inventario);
+            db.ref('ventas').set(ventas);
+            
+            renderCarrito();
+            renderTodo();
+            showSection('ventas');
+            
+            alert(`✅ Factura ${v.id} cargada para edición. Modifica y vuelve a procesar.`);
+        }
+
+        function eliminarFactura(idx) {
+            if(!usuarioSesionActiva) return alert("Inicia sesión");
+            if(usuarioSesionActiva.rol === 'vendedor') return alert("No tienes permisos para eliminar");
+            
+            const v = ventas[idx];
+            if(!v) return;
+            
+            if(!confirm(`¿Eliminar factura ${v.id}? Los productos se devolverán al inventario.`)) return;
+            
+            if (v.items) {
+                v.items.forEach(item => {
+                    const p = inventario.find(i => i.id == item.id);
+                    if(p) p.stock += item.cant;
+                });
+            }
+            
+            ventas.splice(idx, 1);
+            
+            db.ref('inventario').set(inventario);
+            db.ref('ventas').set(ventas);
+            
+            renderTodo();
+            calcularTotalesDia();
+            alert(`✅ Factura ${v.id} eliminada. Stock devuelto al inventario.`);
+        }
+
+        // ============================================================
+        // PROCESAR FACTURA
+        // ============================================================
+        function procesarFactura() {
+            if(carrito.length === 0) return alert("Carrito vacío");
+            if(!usuarioSesionActiva) return alert("Inicia sesión");
+            
+            const total = carrito.reduce((a,b) => a + b.sub, 0);
+            const abono = parseFloat(document.getElementById('vAbono').value.replace(/\./g, '')) || 0;
+            
+            const raw = document.getElementById('vFechaManual').value;
+            const p = raw.split('-');
+            const fecha = parseInt(p[2]) + '/' + parseInt(p[1]) + '/' + p[0];
+            const hoy = new Date();
+            const hora = hoy.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+            
+            let id, usuarioDespacho = usuarioSesionActiva.nombre;
+            
             if (editVentaOriginalMetadata) {
-                idFacturaFinal = editVentaOriginalMetadata.id;
-                horaFinal = editVentaOriginalMetadata.hora;
-                arqueadoEstado = editVentaOriginalMetadata.arqueado;
+                id = editVentaOriginalMetadata.id;
                 usuarioDespacho = editVentaOriginalMetadata.usuario || usuarioDespacho;
             } else {
-                idFacturaFinal = "FAC-"+numFactura.toString().padStart(4,'0');
-                arqueadoEstado = false;
-                const hoy = new Date(); horaFinal = hoy.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                id = "FAC-" + String(numFactura).padStart(4, '0');
             }
-
-            const v = { 
-                id: idFacturaFinal, fecha: fechaFinal, hora: horaFinal, 
-                cliente: document.getElementById('vCliente').value || "Cliente General", 
-                items: [...carrito], total: t, abono: a, deuda: t-a, 
-                estado: (t-a) > 0 ? 'DEBE' : 'PAGO', arqueado: arqueadoEstado, usuario: usuarioDespacho
-            }; 
             
-            carrito.forEach(c => { const p = inventario.find(i => i.id == c.id); if(p) p.stock -= c.cant; }); 
+            const v = {
+                id, fecha, hora,
+                cliente: document.getElementById('vCliente').value || "Cliente General",
+                items: [...carrito],
+                total, abono,
+                deuda: total - abono,
+                estado: (total - abono) > 0 ? 'DEBE' : 'PAGO',
+                usuario: usuarioDespacho
+            };
+            
+            carrito.forEach(c => {
+                const p = inventario.find(i => i.id == c.id);
+                if(p) p.stock = (p.stock || 0) - c.cant;
+            });
             
             if (editVentaOriginalMetadata) {
                 ventas.splice(editVentaOriginalMetadata.posicionOriginal, 0, v);
                 editVentaOriginalMetadata = null;
             } else {
-                ventas.push(v); numFactura++; db.ref('numFactura').set(numFactura);
+                ventas.push(v);
+                numFactura++;
+                db.ref('numFactura').set(numFactura);
             }
-
-            db.ref('inventario').set(inventario); db.ref('ventas').set(ventas); 
             
-            if(confirm("¡Venta procesada con éxito! ¿Desea imprimir?")) imprimirFactura(v); 
+            db.ref('ventas').set(ventas);
+            db.ref('inventario').set(inventario);
             
-            carrito=[]; document.getElementById('vAbono').value=''; document.getElementById('vCliente').value='';
-            renderCart(); 
+            carrito = [];
+            document.getElementById('vCliente').value = '';
+            document.getElementById('vAbono').value = '';
+            renderCarrito();
+            renderTodo();
+            calcularTotalesDia();
             
-            if (usuarioSesionActiva && usuarioSesionActiva.rol === 'vendedor') showSection('ventas');
-            else showSection('dashboard'); 
+            if(confirm("✅ Venta procesada con éxito! ¿Desea imprimir?")) {
+                const nuevoIdx = ventas.findIndex(v2 => v2.id === v.id && v2.fecha === v.fecha && v2.hora === v.hora);
+                if(nuevoIdx !== -1) imprimirFactura(nuevoIdx);
+            }
+            
+            showSection('dashboard');
         }
 
-        function verDetalleFactura(idx) {
-            const esRestringido = (usuarioSesionActiva && (usuarioSesionActiva.rol === 'vendedor' || usuarioSesionActiva.rol === 'partner'));
-            const v = ventas[idx];
-            document.getElementById('detTitle').innerText = `Detalle: ${v.id} - ${v.cliente}`;
-            
-            let h = ''; v.items.forEach(i => { h += `<tr><td>${i.nombre}</td><td>${i.cant}</td><td style="${esRestringido ? 'display:none;':''}">$${i.precio.toLocaleString('de-DE')}</td><td style="${esRestringido ? 'display:none;':''}">$${i.sub.toLocaleString('de-DE')}</td></tr>`; });
-            document.getElementById('detBody').innerHTML = h;
-            
-            const trTotal = document.getElementById('detTotal');
-            if(trTotal) {
-                if (esRestringido) trTotal.style.display = 'none';
-                else {
-                    trTotal.style.display = 'block';
-                    trTotal.innerHTML = `Total: $${v.total.toLocaleString('de-DE')} | Abono: $${v.abono.toLocaleString('de-DE')} | Saldo: $${v.deuda.toLocaleString('de-DE')}`;
-                }
-            }
-            if(mDet) mDet.show();
+        // ============================================================
+        // PRODUCCIÓN
+        // ============================================================
+        function obtenerFechaFormateada() {
+            const raw = document.getElementById('prodFechaManual').value;
+            if(!raw) return new Date().toLocaleDateString();
+            const p = raw.split('-');
+            return parseInt(p[2]) + '/' + parseInt(p[1]) + '/' + p[0];
         }
 
-        function solicitarSecurity(acc, idx) { 
-            if(usuarioSesionActiva && usuarioSesionActiva.rol === 'partner') return;
-            document.getElementById('secAction').value = acc; document.getElementById('secIdx').value = idx; document.getElementById('secPass').value = ""; 
-            let msgs = { 'delVenta': '¿Eliminar factura?', 'editVenta': '¿Editar factura?', 'delProd': '¿Eliminar producto?', 'delCli': '¿Eliminar cliente?', 'prodSave': '¿Modificar registro del historial?', 'delArqueo': '¿Eliminar arqueo?', 'editArqueo': '¿Cargar datos del arqueo?' }; 
-            document.getElementById('secMsg').innerText = msgs[acc]; if(mSec) mSec.show(); 
+        function actualizarVentasProduccion() {
+            if (!usuarioSesionActiva && !sesionActiva) return;
+            if (document.getElementById('prodIdx').value !== "-1") return;
+            
+            const fecha = obtenerFechaFormateada();
+            let total = 0;
+            if (ventas) {
+                ventas.forEach(v => {
+                    if(v.fecha === fecha && v.items) {
+                        v.items.forEach(item => total += (parseInt(item.cant) || 0));
+                    }
+                });
+            }
+            document.getElementById('prodVentas').value = total;
+            calcularProducido();
         }
-        function sugerirPrecio() { const p = inventario.find(i => i.id == document.getElementById('vProd').value); if(p) document.getElementById('vPrec').value = p.precio; }
-        function addCarrito() { const p = inventario.find(i => i.id == document.getElementById('vProd').value); if(!p) return; const cant = parseInt(document.getElementById('vCant').value); const prec = parseFloat(document.getElementById('vPrec').value); carrito.push({ id: p.id, nombre: p.nombre, cant, precio: prec, sub: cant * prec }); renderCart(); }
-        function renderCart() { let h = ''; let t = 0; carrito.forEach((c,i) => { t += c.sub; h += `<tr><td>${c.nombre}</td><td>${c.cant}</td><td>$${c.sub.toLocaleString('de-DE')}</td><td class="text-end"><button type="button" class="btn-action btn-del" onclick="carrito.splice(${i},1);renderCart()"><i class="bi bi-trash"></i></button></td></tr>`; }); document.getElementById('cartBody').innerHTML = h; document.getElementById('totalDisp').innerText = `$${t.toLocaleString('de-DE')}`; }
-        
-        function render() {
-            const esVend = (usuarioSesionActiva && usuarioSesionActiva.rol === 'vendedor');
-            const esPart = (usuarioSesionActiva && usuarioSesionActiva.rol === 'partner');
 
-            if (esVend || esPart) {
-                document.querySelectorAll('.hide-vendedor-table-cell').forEach(el => el.style.setProperty('display', 'none', 'important'));
-                document.querySelectorAll('.text-acciones-masivas').forEach(el => el.style.setProperty('display', 'none', 'important'));
-                document.querySelectorAll('.th-checkbox-master').forEach(el => el.style.setProperty('display', 'none', 'important'));
-            }
-            if (esPart) {
-                document.querySelectorAll('.hide-partner-money-cards').forEach(el => el.style.setProperty('display', 'none', 'important'));
-            }
+        function calcularProducido() {
+            const ia = parseFloat(document.getElementById('prodIniAgua').value) || 0;
+            const fa = parseFloat(document.getElementById('prodFinAgua').value) || 0;
+            const ih = parseFloat(document.getElementById('prodIniHielo').value) || 0;
+            const fh = parseFloat(document.getElementById('prodFinHielo').value) || 0;
+            const ib = parseFloat(document.getElementById('prodIniBot').value) || 0;
+            const fb = parseFloat(document.getElementById('prodFinBot').value) || 0;
+            const ini = ia + ih + ib;
+            const fin = fa + fh + fb;
+            const ven = parseFloat(document.getElementById('prodVentas').value) || 0;
+            const res = (fin + ven) - ini;
+            document.getElementById('prodRes').innerText = res;
+        }
 
-            if(document.getElementById('vProd')) document.getElementById('vProd').innerHTML = '<option value="">--</option>' + inventario.map(p => `<option value="${p.id}">${p.nombre}</option>`).join('');
-            if(document.getElementById('dataCli')) document.getElementById('dataCli').innerHTML = clientes.map(c => `<option value="${c.nombre}">`).join('');
+        function guardarArqueo() {
+            if(!usuarioSesionActiva) return alert("Inicia sesión");
             
-            if (document.querySelector('.section-add-stock-header')) document.querySelector('.section-add-stock-header').style.display = (esVend || esPart) ? 'none' : '';
-            if (document.querySelector('.action-header-inv')) document.querySelector('.action-header-inv').style.display = (esVend || esPart) ? 'none' : '';
-            if (document.querySelector('.action-header-cli')) document.querySelector('.action-header-cli').style.display = (esVend || esPart) ? 'none' : '';
-            if (document.querySelector('.action-header-arqueo')) document.querySelector('.action-header-arqueo').style.display = (esVend || esPart) ? 'none' : '';
-
-            if(document.getElementById('invBody')) {
-                document.getElementById('invBody').innerHTML = inventario.map((p, i) => `
-                    <tr>
-                        <td class="fw-bold">${p.nombre}</td>
-                        <td class="hide-partner-money-cells" style="${esPart ? 'display:none;':''}">$${p.precio.toLocaleString('de-DE')}</td>
-                        <td>
-                            <input type="number" class="form-control form-control-sm border text-center fw-bold bg-light" style="max-width: 100px;" value="${p.stock}" ${(esVend || esPart) ? 'disabled':''} onchange="actualizarStockDirectoInput(${i}, this.value)">
-                        </td>
-                        <td class="${(esVend || esPart) ? 'd-none':''}">
-                            <div class="input-group input-group-sm" style="max-width: 200px;">
-                                <input type="number" id="addStockInput_${i}" class="form-control text-center" placeholder="Ej: 10">
-                                <button class="btn btn-primary fw-bold" type="button" onclick="agregarStockEscrito(${i})">+</button>
-                            </div>
-                        </td>
-                        <td class="text-end px-4 ${(esVend || esPart) ? 'd-none':''}">
-                            <button type="button" class="btn-action btn-edit" onclick="abrirModProd(${i})"><i class="bi bi-pencil"></i></button>
-                            <button type="button" class="btn-action btn-del" onclick="solicitarSecurity('delProd', ${i})"><i class="bi bi-trash"></i></button>
-                        </td>
-                    </tr>
-                `).join('');
+            const pIdx = parseInt(document.getElementById('prodIdx').value);
+            
+            if(pIdx !== -1 && pIdx < produccion.length) {
+                const p = produccion[pIdx];
+                const ia = parseFloat(document.getElementById('prodIniAgua').value) || 0;
+                const fa = parseFloat(document.getElementById('prodFinAgua').value) || 0;
+                const ih = parseFloat(document.getElementById('prodIniHielo').value) || 0;
+                const fh = parseFloat(document.getElementById('prodFinHielo').value) || 0;
+                const ib = parseFloat(document.getElementById('prodIniBot').value) || 0;
+                const fb = parseFloat(document.getElementById('prodFinBot').value) || 0;
+                const ini = ia + ih + ib;
+                const fin = fa + fh + fb;
+                const ven = parseFloat(document.getElementById('prodVentas').value) || 0;
+                const res = (fin + ven) - ini;
+                
+                p.ini = ini; p.fin = fin; p.ven = ven; p.res = res;
+                p.metaIniAgua = ia; p.metaFinAgua = fa;
+                p.metaIniHielo = ih; p.metaFinHielo = fh;
+                p.metaIniBot = ib; p.metaFinBot = fb;
+                
+                inventario.forEach(prod => {
+                    const n = prod.nombre.toLowerCase();
+                    if(n.includes("agua")) prod.stock = fa;
+                    else if(n.includes("hielo")) prod.stock = fh;
+                    else if(n.includes("botellon") || n.includes("botellón")) prod.stock = fb;
+                });
+                
+                db.ref('produccion').set(produccion);
+                db.ref('inventario').set(inventario);
+                document.getElementById('prodIdx').value = "-1";
+                document.getElementById('btnGuardarArqueo').innerHTML = 'GUARDAR ARQUEO';
+                limpiarCamposArqueo();
+                alert("✅ Arqueo actualizado");
+                renderTodo();
+                return;
             }
             
-            if(document.getElementById('cliBody')) document.getElementById('cliBody').innerHTML = clientes.map((c,i) => `<tr><td class="fw-bold">${c.nombre}</td><td>${c.iden}</td><td>${c.tel}</td><td>${c.city}</td><td class="text-end px-4 ${(esVend || esPart) ? 'd-none':''}"><button type="button" class="btn-action btn-edit" onclick="abrirModCli(${i})"><i class="bi bi-pencil"></i></button><button type="button" class="btn-action btn-del" onclick="solicitarSecurity('delCli', ${i})"><i class="bi bi-trash"></i></button></td></tr>`).join('');
+            if(!confirm("¿Guardar arqueo de producción?")) return;
             
-            if(document.getElementById('histBody')) {
-                document.getElementById('histBody').innerHTML = ventas.slice().reverse().map((v, i) => { 
-                    let rIdx = ventas.length - 1 - i; 
-                    let fAgua = 0, fHielo = 0, fBotellon = 0;
+            const ia = parseFloat(document.getElementById('prodIniAgua').value) || 0;
+            const fa = parseFloat(document.getElementById('prodFinAgua').value) || 0;
+            const ih = parseFloat(document.getElementById('prodIniHielo').value) || 0;
+            const fh = parseFloat(document.getElementById('prodFinHielo').value) || 0;
+            const ib = parseFloat(document.getElementById('prodIniBot').value) || 0;
+            const fb = parseFloat(document.getElementById('prodFinBot').value) || 0;
+            
+            const ini = ia + ih + ib;
+            const fin = fa + fh + fb;
+            const fecha = obtenerFechaFormateada();
+            
+            let ven = 0;
+            if (ventas) {
+                ventas.forEach(v => {
+                    if(v.fecha === fecha && v.items) {
+                        v.items.forEach(item => ven += (parseInt(item.cant) || 0));
+                    }
+                });
+            }
+            
+            const res = (fin + ven) - ini;
+            const hoy = new Date();
+            
+            const obj = {
+                fecha: fecha,
+                hora: hoy.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
+                ini: ini,
+                ven: ven,
+                fin: fin,
+                res: res,
+                usuario: usuarioSesionActiva.nombre || "General",
+                metaIniAgua: ia, metaFinAgua: fa,
+                metaIniHielo: ih, metaFinHielo: fh,
+                metaIniBot: ib, metaFinBot: fb
+            };
+            
+            inventario.forEach(prod => {
+                const n = prod.nombre.toLowerCase();
+                if(n.includes("agua")) prod.stock = fa;
+                else if(n.includes("hielo")) prod.stock = fh;
+                else if(n.includes("botellon") || n.includes("botellón")) prod.stock = fb;
+            });
+            
+            produccion.push(obj);
+            db.ref('produccion').set(produccion);
+            db.ref('inventario').set(inventario);
+            
+            limpiarCamposArqueo();
+            renderTodo();
+            alert("✅ Arqueo guardado!\nInicial: " + ini + " | Ventas: " + ven + " | Final: " + fin + " | Producido: " + res);
+        }
+
+        function limpiarCamposArqueo() {
+            document.getElementById('prodIdx').value = "-1";
+            document.getElementById('prodIniAgua').value = 0;
+            document.getElementById('prodFinAgua').value = 0;
+            document.getElementById('prodIniHielo').value = 0;
+            document.getElementById('prodFinHielo').value = 0;
+            document.getElementById('prodIniBot').value = 0;
+            document.getElementById('prodFinBot').value = 0;
+            document.getElementById('btnGuardarArqueo').innerHTML = 'GUARDAR ARQUEO';
+            const hoy = new Date();
+            const fechaStr = hoy.getFullYear() + '-' + String(hoy.getMonth()+1).padStart(2,'0') + '-' + String(hoy.getDate()).padStart(2,'0');
+            document.getElementById('prodFechaManual').value = fechaStr;
+            actualizarVentasProduccion();
+        }
+
+        function editarArqueo(idx) {
+            const p = produccion[idx];
+            if(!p) return;
+            document.getElementById('prodIdx').value = idx;
+            document.getElementById('prodIniAgua').value = p.metaIniAgua || 0;
+            document.getElementById('prodFinAgua').value = p.metaFinAgua || 0;
+            document.getElementById('prodIniHielo').value = p.metaIniHielo || 0;
+            document.getElementById('prodFinHielo').value = p.metaFinHielo || 0;
+            document.getElementById('prodIniBot').value = p.metaIniBot || 0;
+            document.getElementById('prodFinBot').value = p.metaFinBot || 0;
+            if(p.fecha) {
+                const partes = p.fecha.split('/');
+                document.getElementById('prodFechaManual').value = partes[2] + '-' + partes[1].padStart(2,'0') + '-' + partes[0].padStart(2,'0');
+            }
+            document.getElementById('btnGuardarArqueo').innerHTML = 'ACTUALIZAR ARQUEO';
+            actualizarVentasProduccion();
+            document.getElementById('panelFormArqueo').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // ============================================================
+        // DASHBOARD
+        // ============================================================
+        function calcularTotalesDia() {
+            if (!usuarioSesionActiva && !sesionActiva) return;
+            
+            const hoy = new Date().toLocaleDateString();
+            let vendido = 0, recaudado = 0, cartera = 0;
+            let totalAgua = 0, totalHielo = 0, totalBotellon = 0;
+            
+            if (ventas) {
+                ventas.forEach(v => {
+                    if(v.fecha === hoy) {
+                        vendido += v.total || 0;
+                        recaudado += v.abono || 0;
+                        cartera += v.deuda || 0;
+                        
+                        if (v.items) {
+                            v.items.forEach(item => {
+                                const n = item.nombre.toLowerCase();
+                                if(n.includes("agua")) totalAgua += (parseInt(item.cant) || 0);
+                                else if(n.includes("hielo")) totalHielo += (parseInt(item.cant) || 0);
+                                else if(n.includes("botellon") || n.includes("botellón")) totalBotellon += (parseInt(item.cant) || 0);
+                            });
+                        }
+                    }
+                });
+            }
+            
+            const elVendido = document.getElementById('dashVendido');
+            const elRecaudado = document.getElementById('dashRecaudado');
+            const elCartera = document.getElementById('dashCartera');
+            const elAgua = document.getElementById('liveAgua');
+            const elHielo = document.getElementById('liveHielo');
+            const elBotellon = document.getElementById('liveBotellon');
+            const elMonto = document.getElementById('liveMontoTotal');
+            
+            if (elVendido) elVendido.innerText = '$' + vendido.toLocaleString('de-DE');
+            if (elRecaudado) elRecaudado.innerText = '$' + recaudado.toLocaleString('de-DE');
+            if (elCartera) elCartera.innerText = '$' + cartera.toLocaleString('de-DE');
+            if (elAgua) elAgua.innerText = totalAgua;
+            if (elHielo) elHielo.innerText = totalHielo;
+            if (elBotellon) elBotellon.innerText = totalBotellon;
+            if (elMonto) elMonto.innerText = (totalAgua + totalHielo + totalBotellon) + ' und';
+        }
+
+        // ============================================================
+        // EXPORTAR EXCEL
+        // ============================================================
+        function exportarExcel() {
+            if(!usuarioSesionActiva) return alert("Inicia sesión");
+            if(!ventas || ventas.length === 0) return alert("No hay ventas para exportar");
+            
+            let csv = "Factura;Fecha;Hora;Cliente;Despachador;Total;Abono;Deuda;Estado;Cant_Agua;Cant_Hielo;Cant_Botellon\n";
+            
+            ventas.forEach(v => {
+                let agua = 0, hielo = 0, botellon = 0;
+                if (v.items) {
                     v.items.forEach(item => {
                         const name = item.nombre.toLowerCase();
-                        if(name.includes("agua")) fAgua += item.cant;
-                        else if(name.includes("hielo")) fHielo += item.cant;
-                        else if(name.includes("botellon") || name.includes("botellón")) fBotellon += item.cant;
+                        if(name.includes("agua")) agua += (parseInt(item.cant) || 0);
+                        else if(name.includes("hielo")) hielo += (parseInt(item.cant) || 0);
+                        else if(name.includes("botellon") || name.includes("botellón")) botellon += (parseInt(item.cant) || 0);
                     });
-                    let badg = [];
-                    if(fAgua > 0) badg.push(`${fAgua} Agua`);
-                    if(fHielo > 0) badg.push(`${fHielo} Hielo`);
-                    if(fBotellon > 0) badg.push(`${fBotellon} Botellón`);
-                    let renderPills = badg.length > 0 ? `<br><span class="prod-tag"><i class="bi bi-box-seam"></i> ${badg.join(' | ')}</span>` : '';
-
-                    return `<tr>
-                        <td class="${(esVend || esPart) ? 'd-none':''}"><input type="checkbox" class="form-check-input venta-checkbox" data-index="${rIdx}" onchange="verificarCheckboxesSeleccionados()"></td>
-                        <td><strong class="text-primary">${v.id}</strong></td>
-                        <td><small>${v.fecha}<br>${v.hora}</small></td>
-                        <td><strong>${v.cliente}</strong>${renderPills}</td>
-                        <td><span class="badge bg-light text-dark border">${v.usuario || 'Gral'}</span></td>
-                        <td class="hide-vendedor-table-cell hide-partner-money-cells" style="${(esVend || esPart) ? 'display:none;':''}">$${v.total.toLocaleString('de-DE')}</td>
-                        <td class="hide-vendedor-table-cell hide-partner-money-cells" style="${(esVend || esPart) ? 'display:none;':''}">$${v.abono.toLocaleString('de-DE')}</td>
-                        <td class="hide-vendedor-table-cell hide-partner-money-cells text-danger" style="${(esVend || esPart) ? 'display:none;':''}">$${v.deuda.toLocaleString('de-DE')}</td>
-                        <td class="hide-vendedor-table-cell hide-partner-money-cells" style="${(esVend || esPart) ? 'display:none;':''}" ><span class="status-pill ${v.estado === 'DEBE' ? 'status-debe' : 'status-pago'}">${v.estado}</span></td>
-                        <td class="text-center">
-                            <button type="button" class="btn-action btn-view" onclick="verDetalleFactura(${rIdx})"><i class="bi bi-eye-fill"></i></button>
-                            <button type="button" class="btn-action btn-print" onclick="imprimirFactura(ventas[${rIdx}])"><i class="bi bi-printer"></i></button>
-                            <button type="button" class="btn-action btn-edit ${(esVend || esPart) ? 'd-none':''}" onclick="solicitarSecurity('editVenta', ${rIdx})"><i class="bi bi-pencil-square"></i></button>
-                            <button type="button" class="btn-action btn-del ${(esVend || esPart) ? 'd-none':''}" onclick="solicitarSecurity('delVenta', ${rIdx})"><i class="bi bi-trash"></i></button>
-                        </td>
-                    </tr>`; 
-                }).join('');
-                aplicarFiltrosSimultaneos();
+                }
+                csv += `${v.id || ''};${v.fecha || ''};${v.hora || ''};${v.cliente || ''};${v.usuario || 'Gral'};${v.total || 0};${v.abono || 0};${v.deuda || 0};${v.estado || 'PAGO'};${agua};${hielo};${botellon}\n`;
+            });
+            
+            if (produccion && produccion.length > 0) {
+                csv += "\n\nRESUMEN DE ARQUEOS\n";
+                csv += "Fecha;Hora;Usuario;Inicial;Ventas;Final;Producido\n";
+                produccion.forEach(p => {
+                    csv += `${p.fecha || ''};${p.hora || ''};${p.usuario || 'General'};${p.ini || 0};${p.ven || 0};${p.fin || 0};${p.res || 0}\n`;
+                });
             }
             
-            if(document.getElementById('prodHistBody')) {
-                document.getElementById('prodHistBody').innerHTML = produccion.slice().reverse().map((p,i) => { 
-                    let rIdx = produccion.length - 1 - i; 
-                    return `<tr>
-                        <td><small>${p.fecha}<br>${p.hora}</small></td>
-                        <td><span class="badge bg-light text-secondary border fw-bold text-uppercase">${p.usuario || 'General'}</span></td>
-                        <td>${p.ini}</td>
-                        <td>${p.ven}</td>
-                        <td><strong>${p.fin}</strong></td>
-                        <td>
-                            <span class="badge bg-primary text-white font-monospace">${p.detAgua || 0} Agua</span>
-                            <span class="badge bg-info text-dark font-monospace">${p.detHielo || 0} Hielo</span>
-                            <span class="badge bg-secondary text-white font-monospace">${p.detBotellon || 0} Bot.</span>
-                            <div class="small text-success fw-bold mt-1">Prod. Neta Turno: +${p.res} unds</div>
-                        </td>
-                        <td class="text-end ${(esVend || esPart) ? 'd-none':''}">
-                            <button type="button" class="btn-action btn-edit" title="Modificar" onclick="solicitarSecurity('editArqueo', ${rIdx})"><i class="bi bi-pencil"></i></button>
-                            <button type="button" class="btn-action btn-del" onclick="solicitarSecurity('delArqueo', ${rIdx})"><i class="bi bi-trash"></i></button>
-                        </td>
-                    </tr>`; 
-                }).join('');
+            const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'Reporte_Cascada_' + new Date().toLocaleDateString().replace(/\//g, '-') + '.csv';
+            link.click();
+            URL.revokeObjectURL(link.href);
+            
+            alert("✅ Reporte exportado exitosamente");
+        }
+
+        // ============================================================
+        // VENTAS - FUNCIONES DEL CARRITO
+        // ============================================================
+        function addCarrito() {
+            const p = inventario.find(i => i.id == document.getElementById('vProd').value);
+            if(!p) return alert("Selecciona producto");
+            const cant = parseInt(document.getElementById('vCant').value) || 0;
+            const prec = parseFloat(document.getElementById('vPrec').value) || 0;
+            if(cant <= 0) return alert("Cantidad inválida");
+            if(prec <= 0) return alert("Precio inválido");
+            carrito.push({ id: p.id, nombre: p.nombre, cant, precio: prec, sub: cant * prec });
+            renderCarrito();
+        }
+
+        function sugerirPrecio() {
+            const p = inventario.find(i => i.id == document.getElementById('vProd').value);
+            if(p) document.getElementById('vPrec').value = p.precio;
+        }
+
+        function formatearEntradaAbono(input) {
+            let valor = input.value.replace(/\D/g, "");
+            input.value = valor.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+
+        // ============================================================
+        // PRODUCTOS Y CLIENTES
+        // ============================================================
+        function abrirModProd(idx = -1) {
+            if (!usuarioSesionActiva) return alert("Inicia sesión");
+            document.getElementById('pIdx').value = idx;
+            if(idx !== -1 && inventario[idx]) {
+                const p = inventario[idx];
+                document.getElementById('pNom').value = p.nombre || '';
+                document.getElementById('pPre').value = p.precio || 0;
+                document.getElementById('pSto').value = p.stock || 0;
+            } else {
+                document.getElementById('pNom').value = '';
+                document.getElementById('pPre').value = '';
+                document.getElementById('pSto').value = '';
             }
-            if(document.getElementById('cfgNom')) { document.getElementById('cfgNom').value = config.nombre; document.getElementById('cfgNit').value = config.nit; document.getElementById('cfgDir').value = config.dir; document.getElementById('cfgTel').value = config.tel; }
+            mProd.show();
         }
-        
-        function abrirModProd(idx=-1){ if(usuarioSesionActiva && usuarioSesionActiva.rol === 'partner') return; document.getElementById('pIdx').value=idx; if(idx!==-1){const p=inventario[idx]; document.getElementById('pNom').value=p.nombre; document.getElementById('pPre').value=p.precio; document.getElementById('pSto').value=p.stock;} else {document.getElementById('pNom').value=''; document.getElementById('pPre').value=''; document.getElementById('pSto').value='';} if(mProd) mProd.show(); }
-        function saveProd(){ const idx=parseInt(document.getElementById('pIdx').value); const p={id:idx===-1?Date.now():inventario[idx].id, nombre:document.getElementById('pNom').value, precio:parseFloat(document.getElementById('pPre').value), stock:parseInt(document.getElementById('pSto').value)}; if(idx===-1) { if(!inventario) inventario = []; inventario.push(p); } else inventario[idx]=p; db.ref('inventario').set(inventario); if(mProd) mProd.hide(); }
-        function abrirModCli(idx=-1){ if(usuarioSesionActiva && usuarioSesionActiva.rol === 'partner') return; document.getElementById('cIdx').value=idx; if(idx!==-1){const c=clientes[idx]; document.getElementById('cNom').value=c.nombre; document.getElementById('cIden').value=c.iden; document.getElementById('cTel').value=c.tel; document.getElementById('cDir').value=c.dir; document.getElementById('cCity').value=c.city;} else {document.getElementById('cNom').value=''; document.getElementById('cIden').value=''; document.getElementById('cTel').value=''; document.getElementById('cDir').value=''; document.getElementById('cCity').value='';} if(mCli) mCli.show(); }
-        function saveCli(){ const idx=parseInt(document.getElementById('cIdx').value); const c={ nombre:document.getElementById('cNom').value, iden:document.getElementById('cIden').value, tel:document.getElementById('cTel').value, dir:document.getElementById('cDir').value, city:document.getElementById('cCity').value }; if(idx===-1) clientes.push(c); else clientes[idx]=c; db.ref('clientes').set(clientes); if(mCli) mCli.hide(); }
-        function guardarConfig(){ config={nombre:document.getElementById('cfgNom').value, nit:document.getElementById('cfgNit').value, dir:document.getElementById('cfgDir').value, tel:document.getElementById('cfgTel').value}; db.ref('config').set(config); alert("Datos de empresa actualizados."); }
-        function obtenerValorPuro(str) { return parseFloat(str.toString().replace(/\./g, "")) || 0; }
-        function formatearEntradaAbono(input) { let valor = input.value.replace(/\D/g, ""); input.value = valor.replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
-        
-        function exportarExcel() { 
-            let csv = "Factura;Fecha;Hora;Cliente;Despachador;Total;Abono;Deuda;Estado;Cant_Agua;Cant_Hielo;Cant_Botellon\n"; 
-            ventas.forEach(v => {
-                let csvAgua = 0, csvHielo = 0, csvBotellon = 0;
-                v.items.forEach(item => {
-                    const name = item.nombre.toLowerCase();
-                    if(name.includes("agua")) csvAgua += item.cant;
-                    else if(name.includes("hielo")) csvHielo += item.cant;
-                    else if(name.includes("botellon") || name.includes("botellón")) csvBotellon += item.cant;
-                });
-                csv += `${v.id};${v.fecha};${v.hora};${v.cliente};${v.usuario || 'Gral'};${v.total};${v.abono};${v.deuda};${v.estado};${csvAgua};${csvHielo};${csvBotellon}\n`; 
-            }); 
-            const b = new Blob(["\ufeff"+csv], {type:'text/csv'}); const a = document.createElement('a'); a.href=URL.createObjectURL(b); a.download='Reporte_Cascada.csv'; a.click(); 
+
+        function saveProd() {
+            const idx = parseInt(document.getElementById('pIdx').value);
+            const p = {
+                id: idx === -1 ? Date.now() : inventario[idx].id,
+                nombre: document.getElementById('pNom').value,
+                precio: parseFloat(document.getElementById('pPre').value) || 0,
+                stock: parseInt(document.getElementById('pSto').value) || 0
+            };
+            if(idx === -1) inventario.push(p);
+            else inventario[idx] = p;
+            db.ref('inventario').set(inventario);
+            mProd.hide();
+            renderTodo();
         }
+
+        function abrirModCli(idx = -1) {
+            if (!usuarioSesionActiva) return alert("Inicia sesión");
+            document.getElementById('cIdx').value = idx;
+            if(idx !== -1 && clientes[idx]) {
+                const c = clientes[idx];
+                document.getElementById('cNom').value = c.nombre || '';
+                document.getElementById('cIden').value = c.iden || '';
+                document.getElementById('cTel').value = c.tel || '';
+                document.getElementById('cCity').value = c.city || '';
+            } else {
+                document.getElementById('cNom').value = '';
+                document.getElementById('cIden').value = '';
+                document.getElementById('cTel').value = '';
+                document.getElementById('cCity').value = '';
+            }
+            mCli.show();
+        }
+
+        function saveCli() {
+            const idx = parseInt(document.getElementById('cIdx').value);
+            const c = {
+                nombre: document.getElementById('cNom').value,
+                iden: document.getElementById('cIden').value,
+                tel: document.getElementById('cTel').value,
+                city: document.getElementById('cCity').value
+            };
+            if(idx === -1) clientes.push(c);
+            else clientes[idx] = c;
+            db.ref('clientes').set(clientes);
+            mCli.hide();
+            renderTodo();
+        }
+
+        // ============================================================
+        // PERFIL
+        // ============================================================
+        function actualizarContrasena() {
+            if (!usuarioSesionActiva) return alert("Inicia sesión");
+            const nueva = document.getElementById('myNewPassInput').value.trim();
+            if(!nueva) return alert("Escribe una contraseña");
+            const idx = usuarios.findIndex(u => u.nombre === usuarioSesionActiva.nombre);
+            if(idx === -1) return alert("Error");
+            usuarios[idx].clave = nueva;
+            usuarioSesionActiva.clave = nueva;
+            const sesion = JSON.parse(localStorage.getItem('cascada_user_session'));
+            sesion.user = usuarioSesionActiva;
+            localStorage.setItem('cascada_user_session', JSON.stringify(sesion));
+            db.ref('usuarios').set(usuarios);
+            document.getElementById('myNewPassInput').value = '';
+            alert("✅ Contraseña actualizada");
+        }
+
+        // Inicializar
+        setTimeout(() => { 
+            if (usuarioSesionActiva || sesionActiva) {
+                actualizarVentasProduccion(); 
+                renderTodo(); 
+                calcularTotalesDia(); 
+            }
+        }, 1000);
     </script>
 </body>
 </html>
