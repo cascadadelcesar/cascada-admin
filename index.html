@@ -36,8 +36,11 @@
         .password-container { position: relative; }
         .password-container .toggle-password-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #64748b; cursor: pointer; z-index: 10; }
         .checkbox-column { width: 40px; text-align: center; }
-        .borrado-masivo-btn { display: none; }
-        .borrado-masivo-btn.visible { display: inline-block; }
+        .filtro-ventas { background: #f8fafc; border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #e2e8f0; }
+        .filtro-ventas .form-control, .filtro-ventas .form-select { border-radius: 8px; }
+        .acciones-masivas { display: flex; gap: 8px; flex-wrap: wrap; background: #f1f5f9; padding: 10px 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #e2e8f0; }
+        .acciones-masivas .btn { font-size: 0.85rem; }
+        .acciones-masivas .btn:disabled { opacity: 0.5; cursor: not-allowed; }
         @keyframes pulse { 0% { opacity: 0.8; } 50% { opacity: 1; } 100% { opacity: 0.8; } }
         @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         @media print { .no-print { display: none !important; } }
@@ -50,6 +53,8 @@
             h3 { font-size: 1.4rem; }
             .dash-card { padding: 15px; margin-bottom: 5px; }
             .checkbox-column { width: 30px; }
+            .acciones-masivas { flex-direction: column; }
+            .acciones-masivas .btn { width: 100%; }
         }
     </style>
 </head>
@@ -223,17 +228,52 @@
             </div>
 
             <div class="card-pro">
-                <div class="d-flex justify-content-between align-items-center mb-3 bg-light p-3 rounded-3 border">
-                    <span class="small fw-bold text-secondary">
-                        <i class="bi bi-check2-square text-primary"></i> Selecciona las ventas que deseas eliminar
+                <!-- FILTRO DE VENTAS -->
+                <div class="filtro-ventas">
+                    <div class="row g-2 align-items-end">
+                        <div class="col-md-3">
+                            <label class="small fw-bold text-secondary">BUSCAR</label>
+                            <input type="text" id="filtroTexto" class="form-control form-control-sm" placeholder="Cliente, factura..." oninput="aplicarFiltrosVentas()">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="small fw-bold text-secondary">FECHA DESDE</label>
+                            <input type="date" id="filtroFechaDesde" class="form-control form-control-sm" onchange="aplicarFiltrosVentas()">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="small fw-bold text-secondary">FECHA HASTA</label>
+                            <input type="date" id="filtroFechaHasta" class="form-control form-control-sm" onchange="aplicarFiltrosVentas()">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="small fw-bold text-secondary">ESTADO</label>
+                            <select id="filtroEstado" class="form-select form-select-sm" onchange="aplicarFiltrosVentas()">
+                                <option value="">Todos</option>
+                                <option value="PAGO">Pagado</option>
+                                <option value="DEBE">Debe</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 d-flex gap-2">
+                            <button class="btn btn-outline-secondary btn-sm w-50" onclick="limpiarFiltrosVentas()"><i class="bi bi-arrow-clockwise"></i> Limpiar</button>
+                            <span class="badge bg-light text-dark d-flex align-items-center px-3" id="contadorFiltro">0 ventas</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ACCIONES MASIVAS -->
+                <div class="acciones-masivas">
+                    <span class="small fw-bold text-secondary d-flex align-items-center me-2">
+                        <i class="bi bi-check2-square text-primary me-1"></i> Acciones masivas:
                     </span>
-                    <button id="btnBorradoMasivo" class="btn btn-danger btn-sm fw-bold px-3 borrado-masivo-btn" onclick="eliminarVentasMasivas()">
-                        <i class="bi bi-trash3-fill me-1"></i> Eliminar Seleccionadas (<span id="contadorSeleccionadas">0</span>)
+                    <button class="btn btn-success btn-sm fw-bold px-3" id="btnPagoMasivo" onclick="marcarPagoMasivo()">
+                        <i class="bi bi-check2-circle me-1"></i> Marcar PAGO (<span id="contadorPagoMasivo">0</span>)
                     </button>
+                    <button class="btn btn-danger btn-sm fw-bold px-3" id="btnEliminarMasivo" onclick="eliminarVentasMasivas()">
+                        <i class="bi bi-trash3-fill me-1"></i> Eliminar (<span id="contadorEliminarMasivo">0</span>)
+                    </button>
+                    <span class="small text-muted ms-2" id="mensajeSeleccion">Selecciona ventas para habilitar</span>
                 </div>
 
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle">
+                    <table class="table table-hover align-middle" id="tablaVentas">
                         <thead>
                             <tr>
                                 <th class="checkbox-column"><input type="checkbox" id="checkTodos" onchange="seleccionarTodasVentas(this)"></th>
@@ -411,7 +451,6 @@
             const dia = String(hoy.getDate()).padStart(2, '0');
             const fechaStr = `${año}-${mes}-${dia}`;
             
-            // Solo establecer si no hay una fecha seleccionada manualmente
             const inputVentas = document.getElementById('vFechaManual');
             const inputProduccion = document.getElementById('prodFechaManual');
             
@@ -419,7 +458,6 @@
                 inputVentas.value = fechaStr;
             }
             if (inputProduccion) {
-                // Solo establecer si no está en modo edición de arqueo
                 if (document.getElementById('prodIdx').value === "-1") {
                     inputProduccion.value = fechaStr;
                 }
@@ -436,7 +474,6 @@
             
             verificarSesion();
             
-            // Listeners de Firebase
             db.ref('inventario').on('value', s => { inventario = s.val() || []; if (sesionActiva || usuarioSesionActiva) renderTodo(); });
             db.ref('clientes').on('value', s => { clientes = s.val() || []; if (sesionActiva || usuarioSesionActiva) renderTodo(); });
             db.ref('ventas').on('value', s => { ventas = s.val() || []; if (sesionActiva || usuarioSesionActiva) { renderTodo(); actualizarVentasProduccion(); calcularTotalesDia(); } });
@@ -453,7 +490,6 @@
                 if (sesionActiva || usuarioSesionActiva) renderTodo();
             });
             
-            // Eventos de producción
             function recargarProduccion() {
                 if (document.getElementById('prodIdx').value === "-1" && (sesionActiva || usuarioSesionActiva)) {
                     actualizarVentasProduccion();
@@ -468,7 +504,6 @@
             document.getElementById('prodIniBot').addEventListener('input', recargarProduccion);
             document.getElementById('prodFinBot').addEventListener('input', recargarProduccion);
             
-            // Establecer fecha actual al cargar
             establecerFechaActual();
         });
 
@@ -480,7 +515,7 @@
             if (sesionGuardada) {
                 try {
                     const data = JSON.parse(sesionGuardada);
-                    const tiempoExpiracion = 86400000; // 24 horas
+                    const tiempoExpiracion = 86400000;
                     if (Date.now() - data.loginTimestamp < tiempoExpiracion) {
                         sesionActiva = true;
                         aplicarPerfil(data.user);
@@ -518,7 +553,6 @@
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('userActiveBadge').innerHTML = '<i class="bi bi-person-fill me-1"></i>' + u.nombre.toUpperCase();
             
-            // Establecer fecha actual al cargar perfil
             establecerFechaActual();
             
             setTimeout(() => {
@@ -572,7 +606,7 @@
                 if(link.getAttribute('onclick') && link.getAttribute('onclick').includes(id)) link.classList.add('active');
             });
             if(id === 'produccion') actualizarVentasProduccion();
-            if(id === 'dashboard') { calcularTotalesDia(); actualizarContadorSeleccionadas(); }
+            if(id === 'dashboard') { calcularTotalesDia(); actualizarContadorSeleccionadas(); aplicarFiltrosVentas(); }
             if(id === 'config') { cargarConfiguracion(); }
             if(id === 'ventas' && !editVentaOriginalMetadata) {
                 establecerFechaActual();
@@ -744,7 +778,8 @@
                 return;
             }
             
-            tbody.innerHTML = ventas.slice().reverse().map((v, i) => {
+            let html = '';
+            ventas.slice().reverse().forEach((v, i) => {
                 const idx = ventas.length - 1 - i;
                 
                 let agua = 0, hielo = 0, botellon = 0;
@@ -763,15 +798,15 @@
                 if(botellon > 0) detalleHtml += `<span class="badge bg-secondary me-1">${botellon} Bot.</span>`;
                 if(!detalleHtml) detalleHtml = '<span class="text-muted">Sin productos</span>';
                 
-                return `
-                    <tr>
+                html += `
+                    <tr data-factura="${v.id || ''}" data-cliente="${(v.cliente || '').toLowerCase()}" data-fecha="${v.fecha || ''}" data-estado="${v.estado || 'PAGO'}" data-index="${idx}">
                         <td class="checkbox-column"><input type="checkbox" class="venta-checkbox" data-index="${idx}" onchange="actualizarContadorSeleccionadas()"></td>
                         <td><strong class="text-primary">${v.id || 'N/A'}</strong></td>
                         <td><small>${v.fecha || ''}<br>${v.hora || ''}</small></td>
                         <td>${v.cliente || 'Cliente General'}</td>
                         <td>${detalleHtml}</td>
                         <td>$${(v.total || 0).toLocaleString('de-DE')}</td>
-                        <td><span class="badge ${v.estado === 'DEBE' ? 'bg-danger' : 'bg-success'}">${v.estado || 'PAGO'}</span></td>
+                        <td><span class="status-pill ${v.estado === 'DEBE' ? 'status-debe' : 'status-pago'}">${v.estado || 'PAGO'}</span></td>
                         <td class="text-center">
                             <button class="btn-action btn-view" onclick="verDetalleFactura(${idx})" title="Ver Detalle"><i class="bi bi-eye-fill"></i></button>
                             <button class="btn-action btn-print" onclick="imprimirFactura(${idx})" title="Imprimir"><i class="bi bi-printer"></i></button>
@@ -780,8 +815,11 @@
                         </td>
                     </tr>
                 `;
-            }).join('');
+            });
             
+            tbody.innerHTML = html;
+            
+            // Restaurar selecciones
             document.querySelectorAll('.venta-checkbox').forEach(cb => {
                 const idx = parseInt(cb.dataset.index);
                 if (ventasSeleccionadas.includes(idx)) {
@@ -790,6 +828,63 @@
             });
             
             actualizarContadorSeleccionadas();
+            setTimeout(aplicarFiltrosVentas, 50);
+        }
+
+        // ============================================================
+        // FILTROS DE VENTAS
+        // ============================================================
+        function aplicarFiltrosVentas() {
+            const texto = document.getElementById('filtroTexto').value.toLowerCase().trim();
+            const fechaDesde = document.getElementById('filtroFechaDesde').value;
+            const fechaHasta = document.getElementById('filtroFechaHasta').value;
+            const estado = document.getElementById('filtroEstado').value;
+            
+            const filas = document.querySelectorAll('#histBody tr');
+            let visibles = 0;
+            
+            filas.forEach(tr => {
+                const factura = (tr.dataset.factura || '').toLowerCase();
+                const cliente = (tr.dataset.cliente || '').toLowerCase();
+                const fecha = tr.dataset.fecha || '';
+                const estadoFila = tr.dataset.estado || '';
+                
+                let mostrar = true;
+                
+                if (texto && !factura.includes(texto) && !cliente.includes(texto)) {
+                    mostrar = false;
+                }
+                
+                if (fechaDesde && fecha) {
+                    const partes = fecha.split('/');
+                    const fechaFormateada = `${partes[2]}-${partes[1].padStart(2,'0')}-${partes[0].padStart(2,'0')}`;
+                    if (fechaFormateada < fechaDesde) mostrar = false;
+                }
+                
+                if (fechaHasta && fecha) {
+                    const partes = fecha.split('/');
+                    const fechaFormateada = `${partes[2]}-${partes[1].padStart(2,'0')}-${partes[0].padStart(2,'0')}`;
+                    if (fechaFormateada > fechaHasta) mostrar = false;
+                }
+                
+                if (estado && estadoFila !== estado) {
+                    mostrar = false;
+                }
+                
+                tr.style.display = mostrar ? '' : 'none';
+                if (mostrar) visibles++;
+            });
+            
+            document.getElementById('contadorFiltro').textContent = visibles + ' ventas';
+            actualizarContadorSeleccionadas();
+        }
+
+        function limpiarFiltrosVentas() {
+            document.getElementById('filtroTexto').value = '';
+            document.getElementById('filtroFechaDesde').value = '';
+            document.getElementById('filtroFechaHasta').value = '';
+            document.getElementById('filtroEstado').value = '';
+            aplicarFiltrosVentas();
         }
 
         function renderProduccion() {
@@ -836,42 +931,114 @@
         // SELECCIÓN MÚLTIPLE DE VENTAS
         // ============================================================
         function seleccionarTodasVentas(masterCheckbox) {
-            document.querySelectorAll('.venta-checkbox').forEach(cb => {
+            document.querySelectorAll('#histBody tr:not([style*="display: none"]) .venta-checkbox').forEach(cb => {
                 cb.checked = masterCheckbox.checked;
             });
             actualizarContadorSeleccionadas();
         }
 
         function actualizarContadorSeleccionadas() {
-            const checkboxes = document.querySelectorAll('.venta-checkbox:checked');
+            const checkboxes = document.querySelectorAll('#histBody tr:not([style*="display: none"]) .venta-checkbox:checked');
             const count = checkboxes.length;
-            const btn = document.getElementById('btnBorradoMasivo');
-            const contador = document.getElementById('contadorSeleccionadas');
             
             ventasSeleccionadas = [];
             checkboxes.forEach(cb => {
                 ventasSeleccionadas.push(parseInt(cb.dataset.index));
             });
             
-            if (contador) contador.textContent = count;
+            // Actualizar contadores
+            document.getElementById('contadorPagoMasivo').textContent = count;
+            document.getElementById('contadorEliminarMasivo').textContent = count;
             
-            if (btn) {
-                if (count > 0 && usuarioSesionActiva && usuarioSesionActiva.rol !== 'vendedor') {
-                    btn.classList.add('visible');
-                    btn.style.display = 'inline-block';
+            // Habilitar/deshabilitar botones
+            const btnPago = document.getElementById('btnPagoMasivo');
+            const btnEliminar = document.getElementById('btnEliminarMasivo');
+            const mensaje = document.getElementById('mensajeSeleccion');
+            
+            if (count > 0 && usuarioSesionActiva && usuarioSesionActiva.rol !== 'vendedor') {
+                btnPago.disabled = false;
+                btnEliminar.disabled = false;
+                btnPago.style.opacity = '1';
+                btnEliminar.style.opacity = '1';
+                btnPago.style.cursor = 'pointer';
+                btnEliminar.style.cursor = 'pointer';
+                mensaje.textContent = count + ' venta(s) seleccionada(s)';
+                mensaje.className = 'small text-success ms-2';
+            } else {
+                btnPago.disabled = true;
+                btnEliminar.disabled = true;
+                btnPago.style.opacity = '0.5';
+                btnEliminar.style.opacity = '0.5';
+                btnPago.style.cursor = 'not-allowed';
+                btnEliminar.style.cursor = 'not-allowed';
+                if (count === 0) {
+                    mensaje.textContent = 'Selecciona ventas para habilitar';
+                    mensaje.className = 'small text-muted ms-2';
                 } else {
-                    btn.classList.remove('visible');
-                    btn.style.display = 'none';
+                    mensaje.textContent = 'No tienes permisos para esta acción';
+                    mensaje.className = 'small text-danger ms-2';
                 }
             }
             
             const master = document.getElementById('checkTodos');
             if (master) {
-                const total = document.querySelectorAll('.venta-checkbox').length;
-                const checked = document.querySelectorAll('.venta-checkbox:checked').length;
-                master.checked = total > 0 && checked === total;
-                master.indeterminate = checked > 0 && checked < total;
+                const totalVisibles = document.querySelectorAll('#histBody tr:not([style*="display: none"]) .venta-checkbox').length;
+                const checkedVisibles = document.querySelectorAll('#histBody tr:not([style*="display: none"]) .venta-checkbox:checked').length;
+                master.checked = totalVisibles > 0 && checkedVisibles === totalVisibles;
+                master.indeterminate = checkedVisibles > 0 && checkedVisibles < totalVisibles;
             }
+        }
+
+        // ============================================================
+        // PAGO MASIVO
+        // ============================================================
+        function marcarPagoMasivo() {
+            if(!usuarioSesionActiva) return alert("Inicia sesión");
+            if(usuarioSesionActiva.rol === 'vendedor') return alert("No tienes permisos para esta acción");
+            
+            const seleccionados = document.querySelectorAll('#histBody tr:not([style*="display: none"]) .venta-checkbox:checked');
+            if(seleccionados.length === 0) {
+                alert("No has seleccionado ninguna venta");
+                return;
+            }
+            
+            const indices = [];
+            let contadorDebe = 0;
+            seleccionados.forEach(cb => {
+                const idx = parseInt(cb.dataset.index);
+                if (ventas[idx] && ventas[idx].estado === 'DEBE') {
+                    indices.push(idx);
+                    contadorDebe++;
+                }
+            });
+            
+            if (contadorDebe === 0) {
+                alert("Las ventas seleccionadas ya están pagadas o no tienen deuda.");
+                return;
+            }
+            
+            if(!confirm(`Marcar ${contadorDebe} ventas como PAGO?`)) return;
+            
+            indices.forEach(idx => {
+                const v = ventas[idx];
+                if (v) {
+                    v.estado = 'PAGO';
+                    v.deuda = 0;
+                    v.abono = v.total;
+                }
+            });
+            
+            db.ref('ventas').set(ventas);
+            
+            document.querySelectorAll('.venta-checkbox:checked').forEach(cb => cb.checked = false);
+            ventasSeleccionadas = [];
+            document.getElementById('checkTodos').checked = false;
+            
+            renderTodo();
+            calcularTotalesDia();
+            actualizarContadorSeleccionadas();
+            
+            alert(`✅ ${contadorDebe} ventas marcadas como PAGO.`);
         }
 
         // ============================================================
@@ -881,8 +1048,11 @@
             if(!usuarioSesionActiva) return alert("Inicia sesión");
             if(usuarioSesionActiva.rol === 'vendedor') return alert("No tienes permisos para eliminar");
             
-            const seleccionados = document.querySelectorAll('.venta-checkbox:checked');
-            if(seleccionados.length === 0) return alert("No has seleccionado ninguna venta");
+            const seleccionados = document.querySelectorAll('#histBody tr:not([style*="display: none"]) .venta-checkbox:checked');
+            if(seleccionados.length === 0) {
+                alert("No has seleccionado ninguna venta");
+                return;
+            }
             
             const ids = [];
             seleccionados.forEach(cb => {
@@ -1115,7 +1285,6 @@
             renderTodo();
             calcularTotalesDia();
             
-            // Después de procesar, restaurar fecha actual
             establecerFechaActual();
             
             if(confirm("✅ Venta procesada con éxito! ¿Desea imprimir?")) {
@@ -1137,9 +1306,6 @@
         }
 
         function actualizarVentasProduccion() {
-            if (!usuarioSesionActiva && !sesionActiva) return;
-            if (document.getElementById('prodIdx').value !== "-1") return;
-            
             const fecha = obtenerFechaFormateada();
             let total = 0;
             if (ventas) {
@@ -1277,6 +1443,7 @@
         function editarArqueo(idx) {
             const p = produccion[idx];
             if(!p) return;
+            
             document.getElementById('prodIdx').value = idx;
             document.getElementById('prodIniAgua').value = p.metaIniAgua || 0;
             document.getElementById('prodFinAgua').value = p.metaFinAgua || 0;
@@ -1284,12 +1451,17 @@
             document.getElementById('prodFinHielo').value = p.metaFinHielo || 0;
             document.getElementById('prodIniBot').value = p.metaIniBot || 0;
             document.getElementById('prodFinBot').value = p.metaFinBot || 0;
+            
             if(p.fecha) {
                 const partes = p.fecha.split('/');
                 document.getElementById('prodFechaManual').value = partes[2] + '-' + partes[1].padStart(2,'0') + '-' + partes[0].padStart(2,'0');
             }
+            
             document.getElementById('btnGuardarArqueo').innerHTML = 'ACTUALIZAR ARQUEO';
+            
+            // ACTUALIZAR LAS VENTAS DEL DÍA PARA LA FECHA DEL ARQUEO
             actualizarVentasProduccion();
+            
             document.getElementById('panelFormArqueo').scrollIntoView({ behavior: 'smooth' });
         }
 
